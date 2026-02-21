@@ -94,7 +94,7 @@
 
                             {{-- SECCIÓN LLEGADA --}}
                             <div id="seccion-llegada" class="collapse mt-4">
-                                <div class="card bg-light border-0 rounded-4 shadow-sm">
+                                <div class="card border-0 rounded-4 shadow-sm" style="background-color: #151515; border: 1px solid #1a1a1a !important;">
                                     <div class="card-body p-4">
                                         <div class="d-flex align-items-center mb-3">
                                             <div class="bg-primary text-white p-2 rounded-3 me-2">
@@ -134,13 +134,13 @@
                             {{-- SECCIÓN SALIDA --}}
                             <div id="seccion-salida" class="collapse mt-4">
                                 <div class="mb-3">
-                                    <label for="notas"
-                                        class="form-label fw-semibold text-muted small text-uppercase tracking-wider">
-                                        {{ __('Observaciones de Salida') }}
+                                    <label for="notas" class="form-label fw-bold mb-2">
+                                        <i class="bi bi-chat-left-text-fill text-primary me-1"></i> {{ __('OBSERVACIONES DE SALIDA') }}
                                     </label>
-                                    <textarea name="notas" id="notas" rows="4"
-                                        class="form-control border-light shadow-sm bg-light"
-                                        placeholder="Escribe aquí cualquier nota sobre la salida...">{{ old('notas') }}</textarea>
+                                    <textarea id="notas" name="notas" class="form-control rounded-4 border-0 p-4" 
+                                              style="background-color: #151515; color: #f3f4f6; min-height: 120px; border: 1px solid #1a1a1a !important;"
+                                              placeholder="Escribe aquí cualquier nota sobre la salida...">{{ old('notas') }}</textarea>
+                                    <x-input-error :messages="$errors->get('notas')" class="mt-2" />
                                 </div>
                             </div>
 
