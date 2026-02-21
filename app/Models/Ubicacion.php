@@ -10,6 +10,7 @@ class Ubicacion extends Model
 
     protected $fillable = [
         'nombre',
+        'total_mesas',
     ];
 
     public function registros()

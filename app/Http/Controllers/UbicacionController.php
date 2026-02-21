@@ -31,9 +31,13 @@ class UbicacionController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255|unique:ubicaciones',
+            'total_mesas' => 'required|integer|min:0',
         ], [
             'nombre.required' => 'El nombre del punto de apoyo es obligatorio.',
             'nombre.unique' => 'Ya existe un punto de apoyo con ese nombre.',
+            'total_mesas.required' => 'El total de mesas es obligatorio.',
+            'total_mesas.integer' => 'El total de mesas debe ser un número.',
+            'total_mesas.min' => 'El total de mesas debe ser 0 o mayor.',
         ]);
 
         Ubicacion::create($request->all());
@@ -56,9 +60,13 @@ class UbicacionController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255|unique:ubicaciones,nombre,' . $ubicacion->id,
+            'total_mesas' => 'required|integer|min:0',
         ], [
             'nombre.required' => 'El nombre del punto de apoyo es obligatorio.',
             'nombre.unique' => 'Ya existe un punto de apoyo con ese nombre.',
+            'total_mesas.required' => 'El total de mesas es obligatorio.',
+            'total_mesas.integer' => 'El total de mesas debe ser un número.',
+            'total_mesas.min' => 'El total de mesas debe ser 0 o mayor.',
         ]);
 
         $ubicacion->update($request->all());

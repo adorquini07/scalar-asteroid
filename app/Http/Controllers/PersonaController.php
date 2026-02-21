@@ -26,6 +26,8 @@ class PersonaController extends Controller
             'apodo' => 'nullable|string|max:255',
             'celular' => 'nullable|string|max:255',
             'placa' => 'nullable|string|max:255',
+            'puesto_votacion' => 'nullable|string|max:255',
+            'mesa_votacion' => 'nullable|integer|min:1',
             'activo' => 'boolean',
         ]);
 
@@ -50,6 +52,8 @@ class PersonaController extends Controller
             'apodo' => 'nullable|string|max:255',
             'celular' => 'nullable|string|max:255',
             'placa' => 'nullable|string|max:255',
+            'puesto_votacion' => 'nullable|string|max:255',
+            'mesa_votacion' => 'nullable|integer|min:1',
             'activo' => 'boolean',
         ]);
 
