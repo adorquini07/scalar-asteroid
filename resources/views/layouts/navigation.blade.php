@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+<nav x-data="{ open: false }" class="border-b" style="background-color: #0d0d0d; border-color: #1a1a1a !important;">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -103,7 +103,8 @@
                 Dashboard
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('votacion.dashboard')" :active="request()->routeIs('votacion.dashboard')">
+            <x-responsive-nav-link :href="route('votacion.dashboard')"
+                :active="request()->routeIs('votacion.dashboard')">
                 📊 Votación
             </x-responsive-nav-link>
 

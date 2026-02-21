@@ -43,7 +43,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/registros', [RegistroController::class, 'index'])->name('registros.index');
         Route::resource('personas', PersonaController::class);
         Route::resource('users', UserController::class);
-        Route::resource('ubicaciones', UbicacionController::class);
+        Route::resource('ubicaciones', UbicacionController::class)->parameters([
+            'ubicaciones' => 'ubicacion'
+        ]);
     });
 });
 

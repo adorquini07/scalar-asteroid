@@ -9,7 +9,7 @@
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 dark:border-gray-700">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form method="POST" action="{{ route('ubicaciones.update', ['ubicacione' => $ubicacion->id]) }}" class="space-y-5">
+                    <form method="POST" action="{{ route('ubicaciones.update', $ubicacion) }}" class="space-y-5">
                         @csrf
                         @method('PUT')
 

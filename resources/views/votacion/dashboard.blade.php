@@ -1,168 +1,160 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <h2 class="font-semibold text-lg sm:text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3">
+            <h2 class="h4 font-weight-bold mb-0 text-white">
                 📊 Dashboard de Control de Votación
             </h2>
-            <div class="flex gap-2">
+            <div class="d-flex gap-2">
                 <a href="{{ route('dashboard') }}" 
-                   class="inline-flex items-center px-3 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 transition">
-                    👥 Ver Estado
+                   class="btn btn-outline-light btn-sm fw-bold uppercase px-3 shadow-sm">
+                   <i class="bi bi-people me-1"></i> Ver Estado
                 </a>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-6 md:py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <!-- Resumen General -->
-            <div class="mb-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
-                <div class="flex items-center justify-between">
+    <div class="container py-4">
+        
+        <!-- Resumen General -->
+        <div class="card border-0 shadow-lg mb-4 overflow-hidden rounded-4" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+            <div class="card-body p-4 p-md-5 text-white">
+                <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <h3 class="text-2xl font-bold">Total Registrado para Votar</h3>
-                        <p class="text-indigo-100 mt-1">Personas que han informado dónde votan</p>
+                        <h3 class="display-6 fw-black mb-1">Total Registrado</h3>
+                        <p class="opacity-75 mb-0">Personas que han informado dónde votan</p>
                     </div>
-                    <div class="text-5xl font-bold bg-white text-indigo-600 rounded-full w-24 h-24 flex items-center justify-center shadow-lg">
-                        {{ $totalGeneral }}
+                    <div class="bg-white text-indigo-600 rounded-circle shadow-lg d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="h1 fw-black mb-0">{{ $totalGeneral }}</span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            @if(empty($estadisticas))
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg text-center p-12">
-                    <div class="text-6xl mb-4">🗳️</div>
-                    <p class="text-gray-500 dark:text-gray-400 text-lg">
-                        Aún no hay personas registradas para votar.
-                    </p>
-                    <p class="text-sm text-gray-400 mt-2">
-                        Cuando registres personas con su puesto y mesa de votación, aparecerán aquí.
-                    </p>
-                </div>
-            @else
-                <!-- Estadísticas por Puesto de Votación -->
-                <div class="space-y-6">
-                    @foreach($estadisticas as $stat)
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-lg sm:rounded-lg border-l-4 border-indigo-500">
-                            <div class="p-4 md:p-6">
-                                <!-- Encabezado del Puesto -->
-                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-                                    <div class="flex-1">
-                                        <h3 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                            📍 {{ $stat['ubicacion']->nombre }}
-                                        </h3>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                            Total: {{ $stat['ubicacion']->total_mesas }} mesas disponibles
-                                        </p>
-                                    </div>
-                                    <div class="mt-3 sm:mt-0 flex items-center gap-3">
-                                        <span class="px-4 py-2 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full font-bold text-lg">
-                                            {{ $stat['total'] }} {{ $stat['total'] == 1 ? 'persona' : 'personas' }}
-                                        </span>
-                                    </div>
+        @if(empty($estadisticas))
+            <div class="card border-0 shadow-lg rounded-4 text-center p-5 mt-5" style="background-color: #0d0d0d; border: 1px solid #1a1a1a !important;">
+                <div class="display-1 mb-4">🗳️</div>
+                <h4 class="text-white fw-bold">Aún no hay personas registradas</h4>
+                <p class="text-secondary">Cuando registres personas con su puesto y mesa, aparecerán aquí.</p>
+            </div>
+        @else
+            <!-- Estadísticas por Puesto de Votación -->
+            <div class="row g-4">
+                @foreach($estadisticas as $stat)
+                    <div class="col-12">
+                        <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="background-color: #0d0d0d; border-left: 5px solid #4f46e5 !important; border-top: 1px solid #1a1a1a !important; border-right: 1px solid #1a1a1a !important; border-bottom: 1px solid #1a1a1a !important;">
+                            <div class="card-header border-0 py-4 px-4 bg-transparent d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                                <div>
+                                    <h3 class="h4 fw-black text-white mb-1">
+                                        <i class="bi bi-geo-alt-fill text-indigo-400 me-2"></i> {{ $stat['ubicacion']->nombre }}
+                                    </h3>
+                                    <p class="small text-secondary fw-bold mb-0">
+                                        {{ $stat['ubicacion']->total_mesas }} MESAS DISPONIBLES
+                                    </p>
                                 </div>
-
+                                <div class="mt-3 mt-sm-0">
+                                    <span class="badge bg-indigo-600 rounded-pill px-4 py-2 fs-6 shadow-sm">
+                                        {{ $stat['total'] }} {{ $stat['total'] == 1 ? 'persona' : 'personas' }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="card-body p-4 pt-0">
+                                <hr class="my-4" style="border-color: #1a1a1a; opacity: 1;">
+                                
                                 <!-- Grid de Mesas -->
                                 @if(!empty($stat['mesas']))
-                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                                         @foreach($stat['mesas'] as $mesa)
-                                            <div class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 rounded-lg p-4 border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow">
-                                                <div class="flex justify-between items-start mb-3">
-                                                    <div>
-                                                        <h4 class="font-bold text-lg text-gray-800 dark:text-gray-100">
-                                                            Mesa {{ $mesa['numero'] }}
-                                                        </h4>
-                                                    </div>
-                                                    <span class="px-3 py-1 bg-green-500 text-white rounded-full text-sm font-bold">
-                                                        {{ $mesa['total'] }}
-                                                    </span>
-                                                </div>
-                                                
-                                                <!-- Lista de personas -->
-                                                <div class="space-y-2 mt-3 pt-3 border-t border-gray-300 dark:border-gray-500">
-                                                    @foreach($mesa['personas'] as $persona)
-                                                        <div class="bg-white dark:bg-gray-800 rounded p-2 text-sm">
-                                                            <p class="font-semibold text-gray-900 dark:text-white truncate">
-                                                                {{ $persona->nombre }}
-                                                            </p>
-                                                            <p class="text-xs text-gray-500 dark:text-gray-400">
-                                                                CC: {{ $persona->cedula }}
-                                                                @if($persona->celular)
-                                                                    • 📱 {{ $persona->celular }}
-                                                                @endif
-                                                            </p>
+                                            <div class="col">
+                                                <div class="card h-100 rounded-4 border-0 shadow-sm" style="background-color: #151515; border: 1px solid #222 !important;">
+                                                    <div class="card-body p-4">
+                                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                                            <h5 class="fw-black text-white mb-0">Mesa {{ $mesa['numero'] }}</h5>
+                                                            <span class="badge bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                                                                {{ $mesa['total'] }}
+                                                            </span>
                                                         </div>
-                                                    @endforeach
+                                                        
+                                                        <div class="list-group list-group-flush bg-transparent">
+                                                            @foreach($mesa['personas'] as $persona)
+                                                                <div class="list-group-item bg-transparent border-0 px-0 py-2 mb-2">
+                                                                    <div class="p-3 rounded-3" style="background-color: #1a1a1a; border: 1px solid #222;">
+                                                                        <h6 class="fw-bold text-white mb-1 text-truncate">{{ $persona->nombre }}</h6>
+                                                                        <div class="small d-flex flex-wrap gap-2 text-secondary fw-medium">
+                                                                            <span><i class="bi bi-card-text me-1"></i> {{ $persona->cedula }}</span>
+                                                                            @if($persona->celular)
+                                                                                <span><i class="bi bi-phone me-1"></i> {{ $persona->celular }}</span>
+                                                                            @endif
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         @endforeach
                                     </div>
 
-                                    <!-- Mesas sin registro -->
+                                    <!-- Mesas Vacías -->
                                     @php
                                         $mesasConRegistro = array_keys($stat['mesas']);
-                                        $mesasSinRegistro = [];
+                                        $mesasVacias = [];
                                         for ($i = 1; $i <= $stat['ubicacion']->total_mesas; $i++) {
-                                            if (!in_array($i, $mesasConRegistro)) {
-                                                $mesasSinRegistro[] = $i;
-                                            }
+                                            if (!in_array($i, $mesasConRegistro)) $mesasVacias[] = $i;
                                         }
                                     @endphp
 
-                                    @if(!empty($mesasSinRegistro))
-                                        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                                <span class="font-semibold">Mesas sin registro:</span>
-                                                @foreach($mesasSinRegistro as $mesaNum)
-                                                    <span class="inline-block px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded text-xs mr-1 mb-1">
-                                                        Mesa {{ $mesaNum }}
+                                    @if(!empty($mesasVacias))
+                                        <div class="mt-5 p-4 rounded-4" style="background-color: rgba(255,255,255,0.02); border: 1px dashed #333 text-center;">
+                                            <p class="small text-secondary fw-bold text-uppercase tracking-wider mb-2 text-center">Mesas sin registro actualmente</p>
+                                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                                @foreach($mesasVacias as $m)
+                                                    <span class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 small opacity-50">
+                                                        M-{{ $m }}
                                                     </span>
                                                 @endforeach
-                                            </p>
+                                            </div>
                                         </div>
                                     @endif
                                 @else
-                                    <p class="text-center text-gray-500 dark:text-gray-400 py-4">
-                                        No hay personas registradas en este puesto aún.
-                                    </p>
+                                    <div class="text-center py-5 opacity-50">
+                                        <p class="text-secondary mb-0">No hay personas registradas en este puesto aún.</p>
+                                    </div>
                                 @endif
                             </div>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
+            </div>
 
-                <!-- Resumen al final -->
-                <div class="mt-8 bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">📈 Resumen General</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
-                                {{ count($estadisticas) }}
-                            </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-300">Puestos Activos</div>
+            <!-- Resumen Estadístico Final -->
+            <div class="card border-0 shadow-lg rounded-4 mt-5 overflow-hidden" style="background-color: #0d0d0d; border: 1px solid #1a1a1a !important;">
+                <div class="card-body p-4 p-md-5">
+                    <h5 class="fw-black text-white mb-5 flex items-center gap-2">
+                        <i class="bi bi-bar-chart-fill text-indigo-400"></i> RESUMEN ESTADÍSTICO
+                    </h5>
+                    <div class="row text-center g-4">
+                        <div class="col-6 col-md-3">
+                            <div class="h2 fw-black text-indigo-400 mb-0">{{ count($estadisticas) }}</div>
+                            <div class="small fw-bold text-secondary uppercase tracking-tighter">Puestos</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-green-600 dark:text-green-400">
-                                {{ $totalGeneral }}
-                            </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-300">Total Personas</div>
+                        <div class="col-6 col-md-3">
+                            <div class="h2 fw-black text-green-400 mb-0">{{ $totalGeneral }}</div>
+                            <div class="small fw-bold text-secondary uppercase tracking-tighter">Total Personas</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-purple-600 dark:text-purple-400">
-                                {{ collect($estadisticas)->sum(function($stat) { return count($stat['mesas']); }) }}
-                            </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-300">Mesas con Registro</div>
+                        <div class="col-6 col-md-3">
+                            <div class="h2 fw-black text-purple-400 mb-0">{{ collect($estadisticas)->sum(function($s) { return count($s['mesas']); }) }}</div>
+                            <div class="small fw-bold text-secondary uppercase tracking-tighter">Mesas Activas</div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-orange-600 dark:text-orange-400">
-                                {{ collect($estadisticas)->sum(function($stat) { return $stat['ubicacion']->total_mesas; }) }}
-                            </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-300">Total Mesas</div>
+                        <div class="col-6 col-md-3">
+                            <div class="h2 fw-black text-orange-400 mb-0">{{ collect($estadisticas)->sum(function($s) { return $s['ubicacion']->total_mesas; }) }}</div>
+                            <div class="small fw-bold text-secondary uppercase tracking-tighter">Mesas Totales</div>
                         </div>
                     </div>
                 </div>
-            @endif
-        </div>
+            </div>
+        @endif
     </div>
 
     <!-- Auto-refresh cada 30 segundos -->
@@ -171,4 +163,14 @@
             location.reload();
         }, 30000);
     </script>
+
+    <style>
+        .rounded-4 { border-radius: 1.5rem !important; }
+        .fw-black { font-weight: 900 !important; }
+        .tracking-tighter { letter-spacing: -0.05em; }
+        .text-indigo-400 { color: #818cf8 !important; }
+        .text-indigo-600 { color: #4f46e5 !important; }
+        .bg-indigo-600 { background-color: #4f46e5 !important; }
+        .opacity-75 { opacity: 0.75; }
+    </style>
 </x-app-layout>

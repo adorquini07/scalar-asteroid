@@ -1,239 +1,354 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="h4 font-weight-bold mb-0">
             {{ __('Registrar Actividad') }}
         </h2>
     </x-slot>
 
-    <div class="py-6 md:py-10">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-xl">
-                <div class="p-5 md:p-8 text-gray-900 dark:text-gray-100">
-                    <form method="POST" action="{{ route('registros.store') }}" class="space-y-6">
-                        @csrf
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-7">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden"
+                    style="background-color: #0d0d0d; border: 1px solid #1a1a1a !important;">
+                    <div class="card-header border-bottom-0 py-4 px-4" style="background-color: transparent;">
+                        <h4 class="card-title fw-bold mb-0 text-primary">Detalles del Registro</h4>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST" action="{{ route('registros.store') }}" id="registro-form">
+                            @csrf
 
-                        {{-- ===== PERSONA ===== --}}
-                        <div>
-                            <x-input-label for="persona_id" :value="__('Persona / Motociclista')" />
-                            <select id="persona_id" name="persona_id"
-                                class="select2 mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                required autofocus>
-                                <option value="" disabled selected>Seleccione una persona...</option>
-                                @foreach($personas as $persona)
-                                    <option value="{{ $persona->id }}">
-                                        {{ $persona->nombre }} ({{ $persona->placa ?? 'Sin placa' }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('persona_id')" class="mt-2" />
-                        </div>
-
-                        {{-- ===== TIPO LLEGÓ / SALIÓ ===== --}}
-                        <div>
-                            <x-input-label for="tipo" :value="__('Estado de la Persona')" />
-                            <div class="flex flex-row gap-3 mt-2">
-                                <label class="flex-1 flex flex-col items-center justify-center text-center p-4 md:p-5 min-h-[110px] rounded-xl border-2 cursor-pointer transition-all
-                                    bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600
-                                    hover:bg-green-50 dark:hover:bg-green-900/30
-                                    has-[:checked]:bg-green-50 dark:has-[:checked]:bg-green-900/40
-                                    has-[:checked]:border-green-500 has-[:checked]:shadow-md">
-                                    <input type="radio" name="tipo" value="llegada" class="opacity-0 absolute w-0 h-0" required>
-                                    <div class="text-3xl mb-1">🟢</div>
-                                    <div class="font-bold text-base md:text-lg text-green-600 dark:text-green-400">Llegó</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Al punto</div>
+                            {{-- 1. PERSONA --}}
+                            <div class="mb-4">
+                                <label for="persona_id" class="form-label fw-bold mb-2">
+                                    <i class="bi bi-person-fill text-primary me-1"></i>
+                                    {{ __('Persona / Motociclista') }}
                                 </label>
-                                <label class="flex-1 flex flex-col items-center justify-center text-center p-4 md:p-5 min-h-[110px] rounded-xl border-2 cursor-pointer transition-all
-                                    bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600
-                                    hover:bg-red-50 dark:hover:bg-red-900/30
-                                    has-[:checked]:bg-red-50 dark:has-[:checked]:bg-red-900/40
-                                    has-[:checked]:border-red-500 has-[:checked]:shadow-md">
-                                    <input type="radio" name="tipo" value="salida" class="opacity-0 absolute w-0 h-0">
-                                    <div class="text-3xl mb-1">🔴</div>
-                                    <div class="font-bold text-base md:text-lg text-red-600 dark:text-red-400">Salió</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">En viaje</div>
-                                </label>
-                            </div>
-                            <x-input-error :messages="$errors->get('tipo')" class="mt-2" />
-                        </div>
-
-                        {{-- ===== PUNTO DE APOYO ===== --}}
-                        <div>
-                            <x-input-label for="punto_apoyo_id" :value="__('Punto de Apoyo')" />
-                            <select id="punto_apoyo_id" name="punto_apoyo_id"
-                                class="select2 mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                required>
-                                <option value="" disabled selected>Seleccione un punto de apoyo...</option>
-                                @foreach($puntosApoyo as $punto)
-                                    <option value="{{ $punto->id }}">{{ $punto->nombre }}</option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('punto_apoyo_id')" class="mt-2" />
-                        </div>
-
-                        {{-- ===== DATOS DE VOTACIÓN (aparece al seleccionar Llegó) ===== --}}
-                        <div id="votacion-container" style="display: none;"
-                            class="bg-gray-50 dark:bg-gray-700/50 p-5 rounded-xl border border-gray-200 dark:border-gray-600 space-y-5">
-
-                            <h3 class="text-base font-semibold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-600 pb-2">
-                                📋 Datos de Votación
-                            </h3>
-
-                            {{-- Puesto de Votación (filtrado por Punto de Apoyo) --}}
-                            <div>
-                                <x-input-label for="ubicacion_id" :value="__('¿Dónde Vota? (Puesto de Votación)')" />
-                                <select id="ubicacion_id" name="ubicacion_id"
-                                    class="select2 mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                    required>
-                                    <option value="">— Primero seleccione un Punto de Apoyo —</option>
+                                <select id="persona_id" name="persona_id" class="form-select select2-bs5" required
+                                    autofocus>
+                                    <option value="" disabled selected>Seleccione una persona...</option>
+                                    @foreach($personas as $persona)
+                                        <option value="{{ $persona->id }}">
+                                            {{ $persona->nombre }} ({{ $persona->placa ?? 'Sin placa' }})
+                                        </option>
+                                    @endforeach
                                 </select>
-                                <x-input-error :messages="$errors->get('ubicacion_id')" class="mt-2" />
+                                <x-input-error :messages="$errors->get('persona_id')" class="mt-2" />
                             </div>
 
-                            {{-- Mesa de Votación (aparece al seleccionar puesto) --}}
-                            <div id="mesa-container" style="display: none;">
-                                <x-input-label for="mesa_vota" :value="__('¿En qué Mesa Vota?')" />
-                                <div id="mesa-lista" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 mt-2">
-                                    {{-- Se llena dinámicamente --}}
+                            {{-- 2. ESTADO --}}
+                            <div class="mb-4">
+                                <label class="form-label fw-bold mb-2">
+                                    <i class="bi bi-activity text-primary me-1"></i> {{ __('Estado del Registro') }}
+                                </label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="radio" class="btn-check" name="tipo" id="btn-llegada"
+                                            value="llegada" required>
+                                        <label
+                                            class="btn btn-outline-success w-100 py-3 rounded-3 d-flex flex-column align-items-center justify-content-center border-2 transition-all"
+                                            for="btn-llegada">
+                                            <span class="fs-2 mb-1">🟢</span>
+                                            <span class="fw-bold uppercase tracking-tight">Llegó</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="radio" class="btn-check" name="tipo" id="btn-salida"
+                                            value="salida">
+                                        <label
+                                            class="btn btn-outline-danger w-100 py-3 rounded-3 d-flex flex-column align-items-center justify-content-center border-2 transition-all"
+                                            for="btn-salida">
+                                            <span class="fs-2 mb-1">🔴</span>
+                                            <span class="fw-bold uppercase tracking-tight">Salió</span>
+                                        </label>
+                                    </div>
                                 </div>
-                                <input type="hidden" id="mesa_vota" name="mesa_vota">
-                                <x-input-error :messages="$errors->get('mesa_vota')" class="mt-2" />
+                                <x-input-error :messages="$errors->get('tipo')" class="mt-2" />
                             </div>
-                        </div>
 
-                        {{-- ===== REFERIDO Y NOTAS (en grid) ===== --}}
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <x-input-label for="referido" :value="__('Referido / Acompañante')" />
-                                <x-text-input id="referido" class="block mt-1 w-full" type="text" name="referido"
-                                    :value="old('referido')" placeholder="Ej: Nuvis, Julia..." />
+                            {{-- 3. PUNTO DE APOYO --}}
+                            <div class="mb-4">
+                                <label for="punto_apoyo_id" class="form-label fw-bold mb-2">
+                                    <i class="bi bi-geo-alt-fill text-primary me-1"></i> {{ __('Punto de Apoyo') }}
+                                </label>
+                                <select id="punto_apoyo_id" name="punto_apoyo_id" class="form-select select2-bs5"
+                                    required>
+                                    <option value="" disabled selected>Seleccione un punto de apoyo...</option>
+                                    @foreach($puntosApoyo as $punto)
+                                        <option value="{{ $punto->id }}">{{ $punto->nombre }}</option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('punto_apoyo_id')" class="mt-2" />
+                            </div>
+
+                            {{-- 4. REFERIDO --}}
+                            <div class="mb-4">
+                                <label for="referido" class="form-label fw-bold mb-2">
+                                    <i class="bi bi-people-fill text-primary me-1"></i>
+                                    {{ __('Referido / Acompañante') }}
+                                </label>
+                                <input type="text" id="referido" name="referido"
+                                    class="form-control form-control-lg rounded-3 fs-6"
+                                    placeholder="¿Quién lo trajo? (Opcional)" value="{{ old('referido') }}">
                                 <x-input-error :messages="$errors->get('referido')" class="mt-2" />
                             </div>
-                            <div>
-                                <x-input-label for="notas" :value="__('Notas Adicionales (Opcional)')" />
-                                <textarea id="notas" name="notas" rows="2"
-                                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('notas') }}</textarea>
-                                <x-input-error :messages="$errors->get('notas')" class="mt-2" />
-                            </div>
-                        </div>
 
-                        {{-- ===== BOTÓN GUARDAR ===== --}}
-                        <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
-                            <x-primary-button class="w-full justify-center py-3 text-base md:text-lg font-bold">
-                                {{ __('💾 Guardar Registro') }}
-                            </x-primary-button>
-                        </div>
-                    </form>
+                            {{-- SECCIÓN LLEGADA --}}
+                            <div id="seccion-llegada" class="collapse mt-4">
+                                <div class="card bg-light border-0 rounded-4 shadow-sm">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-primary text-white p-2 rounded-3 me-2">
+                                                <i class="bi bi-card-checklist"></i>
+                                            </div>
+                                            <h6 class="fw-bold text-primary mb-0">Información de Votación</h6>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="ubicacion_id"
+                                                class="form-label fw-bold text-secondary small">¿Dónde Vota?</label>
+                                            <select id="ubicacion_id" name="ubicacion_id"
+                                                class="form-select select2-bs5">
+                                                <option value="">Seleccione el puesto...</option>
+                                            </select>
+                                        </div>
+
+                                        <div id="mesa-container" class="collapse mt-3">
+                                            <label class="form-label fw-bold text-secondary small mb-2">Seleccione el
+                                                Número de Mesa</label>
+                                            <div id="mesa-lista" class="row row-cols-4 row-cols-sm-5 row-cols-md-6 g-2">
+                                                {{-- Mesas vía JS --}}
+                                            </div>
+                                            <input type="hidden" id="mesa_vota" name="mesa_vota">
+
+                                            <div id="mesa-alert"
+                                                class="mt-3 p-2 bg-white rounded-pill text-center d-none border shadow-sm">
+                                                <span class="badge bg-primary rounded-pill me-2 px-3 py-2">MESA <span
+                                                        id="mesa-val-display" class="fs-6">0</span></span>
+                                                <span class="text-primary fw-bold">¡Seleccionada!</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- SECCIÓN SALIDA --}}
+                            <div id="seccion-salida" class="collapse mt-4">
+                                <div class="mb-3">
+                                    <label for="notas"
+                                        class="form-label fw-semibold text-muted small text-uppercase tracking-wider">
+                                        {{ __('Observaciones de Salida') }}
+                                    </label>
+                                    <textarea name="notas" id="notas" rows="4"
+                                        class="form-control border-light shadow-sm bg-light"
+                                        placeholder="Escribe aquí cualquier nota sobre la salida...">{{ old('notas') }}</textarea>
+                                </div>
+                            </div>
+
+                            {{-- SUBMIT --}}
+                            <div class="mt-5 border-top pt-4">
+                                <button type="submit"
+                                    class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow-lg transition-transform hover-scale">
+                                    <i class="bi bi-check2-circle me-2 h4 mb-0"></i>
+                                    GUARDAR REGISTRO
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Select2 CDN -->
+    <style>
+        .rounded-4 {
+            border-radius: 1.25rem !important;
+        }
+
+        .hover-scale:active {
+            transform: scale(0.98);
+        }
+
+        /* Custom State Buttons - Dark Mode Refined */
+        .btn-check:checked+.btn-outline-success {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border-color: #10b981;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-check:checked+.btn-outline-danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border-color: #ef4444;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Select2 BS5 Dark Overrides */
+        .select2-container--bootstrap-5 .select2-selection {
+            border-radius: 0.75rem !important;
+            min-height: 56px !important;
+            padding: 0.75rem 0.5rem !important;
+            border-color: #374151 !important;
+            background-color: #1f2937 !important;
+            color: #f3f4f6 !important;
+            font-size: 1rem !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+            line-height: 28px !important;
+            color: #f3f4f6 !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+            border-color: #3b82f6 !important;
+        }
+
+        .select2-dropdown {
+            background-color: #1f2937 !important;
+            border-color: #374151 !important;
+            color: #f3f4f6 !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-search__field {
+            background-color: #111827 !important;
+            color: white !important;
+            border-color: #374151 !important;
+        }
+
+        /* Mesa Grid Refined */
+        .btn-mesa {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            border-radius: 12px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1rem;
+            border-width: 2px;
+            background-color: #1f2937;
+            border-color: #374151;
+            color: #9ca3af;
+        }
+
+        .btn-mesa:hover {
+            transform: translateY(-2px);
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .btn-mesa.selected {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* Form Labels for Dark Theme */
+        .form-label {
+            color: #9ca3af !important;
+        }
+
+        .text-secondary {
+            color: #6b7280 !important;
+        }
+    </style>
+
+    <!-- External Assets -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+        rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
         $(document).ready(function () {
+            // Inicializar Bootstrap Collapse components si es necesario
+            const $llegadaCollapse = $('#seccion-llegada');
+            const $salidaCollapse = $('#seccion-salida');
+            const $mesaCollapse = $('#mesa-container');
 
-            const s2 = {
+            const s2Config = {
                 theme: 'bootstrap-5',
                 width: '100%',
-                language: {
-                    noResults: () => "Sin resultados",
-                    searching: () => "Buscando..."
-                }
+                dropdownCssClass: 'select2-dark-dropdown',
+                language: { noResults: () => "Sin resultados", searching: () => "Buscando..." }
             };
 
-            $('#persona_id').select2({ ...s2, placeholder: 'Buscar persona...' });
-            $('#punto_apoyo_id').select2({ ...s2, placeholder: 'Seleccione un punto de apoyo...' });
-            $('#ubicacion_id').select2({ ...s2, placeholder: '— Primero seleccione un Punto de Apoyo —' });
+            $('#persona_id, #punto_apoyo_id, #ubicacion_id').select2(s2Config);
 
-            // ─── Mostrar/ocultar sección de votación según tipo ───
-            function toggleVotacion() {
+            // ─── Control de Visibilidad ───
+            function updateFormLayout() {
                 const tipo = $('input[name="tipo"]:checked').val();
                 if (tipo === 'llegada') {
-                    $('#votacion-container').slideDown(250);
-                    // ubicacion_id es requerido solo si llegó
+                    $llegadaCollapse.show(300);
+                    $salidaCollapse.hide(200);
                     $('#ubicacion_id').prop('required', true);
-                } else {
-                    $('#votacion-container').slideUp(250);
+                } else if (tipo === 'salida') {
+                    $llegadaCollapse.hide(200);
+                    $salidaCollapse.show(300);
                     $('#ubicacion_id').prop('required', false);
                 }
             }
-            $('input[name="tipo"]').on('change', toggleVotacion);
-            toggleVotacion();
+            $('input[name="tipo"]').on('change', updateFormLayout);
 
-            // ─── Cargar puestos de votación al elegir Punto de Apoyo ───
+            // ─── AJAX Puestos ───
             $('#punto_apoyo_id').on('change', function () {
                 const puntoId = $(this).val();
-                const $ubicacionSelect = $('#ubicacion_id');
+                const $puestoSelect = $('#ubicacion_id');
 
-                $ubicacionSelect.empty().append('<option value="">Cargando...</option>').trigger('change');
-                $('#mesa-container').hide();
-                $('#mesa-lista').empty();
+                $puestoSelect.empty().append('<option value="">Cargando puestos...</option>').trigger('change');
+                $mesaCollapse.hide();
                 $('#mesa_vota').val('');
 
                 if (!puntoId) return;
 
-                $.ajax({
-                    url: '/api/ubicaciones-por-punto/' + puntoId,
-                    type: 'GET',
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    success: function (data) {
-                        $ubicacionSelect.empty().append('<option value="">Seleccione un puesto de votación...</option>');
-                        if (data.length === 0) {
-                            $ubicacionSelect.append('<option value="" disabled>No hay puestos para este punto</option>');
-                        } else {
-                            $.each(data, function (i, u) {
-                                $ubicacionSelect.append(
-                                    `<option value="${u.id}" data-mesas="${u.total_mesas}">${u.nombre}</option>`
-                                );
-                            });
-                        }
-                        $ubicacionSelect.trigger('change');
-                    },
-                    error: function () {
-                        $ubicacionSelect.empty().append('<option value="">Error al cargar puestos</option>').trigger('change');
-                    }
+                $.getJSON('/api/ubicaciones-por-punto/' + puntoId, function (data) {
+                    $puestoSelect.empty().append('<option value="">Seleccione el puesto...</option>');
+                    $.each(data, function (i, item) {
+                        $puestoSelect.append(`<option value="${item.id}" data-mesas="${item.total_mesas}">${item.nombre}</option>`);
+                    });
+                    $puestoSelect.trigger('change');
                 });
             });
 
-            // ─── Mostrar mesas al elegir puesto de votación ───
+            // ─── Mesas ───
             $('#ubicacion_id').on('change', function () {
-                const selectedOption = $(this).find('option:selected');
-                const totalMesas = parseInt(selectedOption.attr('data-mesas')) || 0;
+                const totalMesas = parseInt($(this).find(':selected').data('mesas')) || 0;
                 const $lista = $('#mesa-lista');
-                const $container = $('#mesa-container');
-
                 $lista.empty();
                 $('#mesa_vota').val('');
+                $('#mesa-alert').addClass('d-none');
 
                 if (totalMesas > 0) {
                     for (let i = 1; i <= totalMesas; i++) {
                         $lista.append(`
-                            <button type="button" data-mesa="${i}"
-                                class="mesa-btn py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600
-                                       text-sm font-bold text-gray-700 dark:text-gray-300
-                                       hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30
-                                       transition-all text-center w-full">
-                                Mesa ${i}
-                            </button>`);
+                            <div class="col px-1">
+                                <button type="button" class="btn btn-outline-secondary btn-mesa w-100" data-num="${i}">
+                                    ${i}
+                                </button>
+                            </div>
+                        `);
                     }
-                    $container.slideDown(250);
+                    $mesaCollapse.show(300);
                 } else {
-                    $container.slideUp(250);
+                    $mesaCollapse.hide(200);
                 }
             });
 
-            // ─── Seleccionar mesa ───
-            $(document).on('click', '.mesa-btn', function () {
-                $('.mesa-btn').removeClass('border-indigo-500 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300');
-                $(this).addClass('border-indigo-500 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300');
-                $('#mesa_vota').val($(this).data('mesa'));
-            });
+            // ─── Selección de Mesa ───
+            $(document).on('click', '.btn-mesa', function () {
+                $('.btn-mesa').removeClass('selected btn-primary').addClass('btn-outline-secondary');
+                $(this).addClass('selected btn-primary').removeClass('btn-outline-secondary');
 
+                const val = $(this).data('num');
+                $('#mesa_vota').val(val);
+                $('#mesa-val-display').text(val);
+                $('#mesa-alert').removeClass('d-none');
+            });
         });
     </script>
 </x-app-layout>
