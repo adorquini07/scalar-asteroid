@@ -12,6 +12,7 @@ class Registro extends Model
         'tipo',
         'referido',
         'ubicacion_id',
+        'mesa_vota',
         'notas',
     ];
 

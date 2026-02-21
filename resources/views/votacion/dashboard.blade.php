@@ -76,15 +76,16 @@
                                                         </div>
                                                         
                                                         <div class="list-group list-group-flush bg-transparent">
-                                                            @foreach($mesa['personas'] as $persona)
+                                                            @foreach($mesa['personas'] as $registro)
                                                                 <div class="list-group-item bg-transparent border-0 px-0 py-2 mb-2">
                                                                     <div class="p-3 rounded-3" style="background-color: #1a1a1a; border: 1px solid #222;">
-                                                                        <h6 class="fw-bold text-white mb-1 text-truncate">{{ $persona->nombre }}</h6>
+                                                                        <h6 class="fw-bold text-white mb-1 text-truncate">
+                                                                            {{ $registro->referido ?? 'Sin nombre' }}
+                                                                        </h6>
                                                                         <div class="small d-flex flex-wrap gap-2 text-secondary fw-medium">
-                                                                            <span><i class="bi bi-card-text me-1"></i> {{ $persona->cedula }}</span>
-                                                                            @if($persona->celular)
-                                                                                <span><i class="bi bi-phone me-1"></i> {{ $persona->celular }}</span>
-                                                                            @endif
+                                                                            <span class="text-indigo-400">
+                                                                                <i class="bi bi-bicycle me-1"></i> Traído por: {{ $registro->persona->nombre }}
+                                                                            </span>
                                                                         </div>
                                                                     </div>
                                                                 </div>

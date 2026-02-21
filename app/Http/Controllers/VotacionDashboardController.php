@@ -11,36 +11,35 @@ class VotacionDashboardController extends Controller
 {
     public function index()
     {
-        // Obtener todas las ubicaciones con sus mesas
+        // Obtener todas las ubicaciones con sus registros de llegada
         $ubicaciones = Ubicacion::orderBy('nombre')->get();
-        
-        // Obtener estadísticas por ubicación y mesa
+
         $estadisticas = [];
-        
+        $totalGeneral = 0;
+
         foreach ($ubicaciones as $ubicacion) {
             $mesasData = [];
-            
-            // Obtener el conteo de personas por mesa en este puesto
-            for ($mesa = 1; $mesa <= $ubicacion->total_mesas; $mesa++) {
-                $count = Persona::where('puesto_votacion', $ubicacion->nombre)
-                    ->where('mesa_votacion', $mesa)
-                    ->count();
-                
-                if ($count > 0) {
-                    $mesasData[$mesa] = [
-                        'numero' => $mesa,
-                        'total' => $count,
-                        'personas' => Persona::where('puesto_votacion', $ubicacion->nombre)
-                            ->where('mesa_votacion', $mesa)
-                            ->select('nombre', 'cedula', 'celular')
-                            ->get()
+
+            // Obtener registros de llegada para este puesto
+            $registrosPuesto = \App\Models\Registro::where('ubicacion_id', $ubicacion->id)
+                ->where('tipo', 'llegada')
+                ->get();
+
+            $totalUbicacion = $registrosPuesto->count();
+            $totalGeneral += $totalUbicacion;
+
+            if ($totalUbicacion > 0) {
+                // Agrupar por mesa
+                $registrosPorMesa = $registrosPuesto->groupBy('mesa_vota');
+
+                foreach ($registrosPorMesa as $numMesa => $registros) {
+                    $mesasData[$numMesa] = [
+                        'numero' => $numMesa,
+                        'total' => $registros->count(),
+                        'personas' => $registros // Aquí pasamos los registros, que tienen 'referido'
                     ];
                 }
-            }
-            
-            $totalUbicacion = Persona::where('puesto_votacion', $ubicacion->nombre)->count();
-            
-            if ($totalUbicacion > 0 || !empty($mesasData)) {
+
                 $estadisticas[] = [
                     'ubicacion' => $ubicacion,
                     'mesas' => $mesasData,
@@ -48,10 +47,7 @@ class VotacionDashboardController extends Controller
                 ];
             }
         }
-        
-        // Total general
-        $totalGeneral = Persona::whereNotNull('puesto_votacion')->count();
-        
+
         return view('votacion.dashboard', compact('estadisticas', 'totalGeneral'));
     }
 }

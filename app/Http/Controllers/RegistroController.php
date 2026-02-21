@@ -31,35 +31,22 @@ class RegistroController extends Controller
             'tipo' => 'required|in:llegada,salida',
             'punto_apoyo_id' => 'required|exists:puntos_apoyo,id',
             'ubicacion_id' => 'required|exists:ubicaciones,id',
-            'mesa_vota' => 'nullable|integer|min:1',
-            'referido' => 'nullable|string|max:255',
+            'mesa_vota' => 'required_if:tipo,llegada|nullable|integer|min:1',
+            'referido' => 'required_if:tipo,llegada|nullable|string|max:255',
             'notas' => 'nullable|string',
         ], [
             'tipo.in' => 'El tipo de registro debe ser llegada o salida.',
             'punto_apoyo_id.required' => 'Debe seleccionar un punto de apoyo.',
             'ubicacion_id.required' => 'Debe seleccionar un puesto de votacion.',
-            'mesa_vota.integer' => 'La mesa debe ser un numero.',
-            'mesa_vota.min' => 'La mesa debe ser mayor a 0.',
+            'mesa_vota.required_if' => 'Debe seleccionar una mesa si el estado es llegada.',
+            'referido.required_if' => 'Debe ingresar el nombre del votante (referido).',
         ]);
-
-        $persona = Persona::findOrFail($request->persona_id);
-
-        // Guardar datos de votacion en la persona solo si llego
-        if ($request->tipo === 'llegada') {
-            $ubicacion = Ubicacion::find($request->ubicacion_id);
-            if ($ubicacion) {
-                $persona->puesto_votacion = $ubicacion->nombre;
-            }
-            if ($request->filled('mesa_vota')) {
-                $persona->mesa_votacion = $request->mesa_vota;
-            }
-            $persona->save();
-        }
 
         Registro::create([
             'persona_id' => $request->persona_id,
             'user_id' => auth()->id(),
             'ubicacion_id' => $request->ubicacion_id,
+            'mesa_vota' => $request->mesa_vota,
             'tipo' => $request->tipo,
             'referido' => $request->referido,
             'notas' => $request->notas,
