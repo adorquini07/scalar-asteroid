@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Registro;
 use App\Models\Persona;
-use App\Models\Ubicacion; // Add this import
+use App\Models\Ubicacion;
+use App\Models\PuntoApoyo;
 use Illuminate\Http\Request;
 
 class RegistroController extends Controller
@@ -18,38 +19,42 @@ class RegistroController extends Controller
     public function create()
     {
         $personas = Persona::where('activo', true)->orderBy('nombre')->get();
-        $ubicaciones = Ubicacion::orderBy('nombre')->get(); // Fetch ubicaciones
-        return view('registros.create', compact('personas', 'ubicaciones'));
+        $puntosApoyo = PuntoApoyo::orderBy('nombre')->get();
+        // Ubicaciones se cargan dinamicamente por AJAX cuando se elige el Punto de Apoyo
+        return view('registros.create', compact('personas', 'puntosApoyo'));
     }
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'persona_id' => 'required|exists:personas,id',
             'tipo' => 'required|in:llegada,salida',
+            'punto_apoyo_id' => 'required|exists:puntos_apoyo,id',
             'ubicacion_id' => 'required|exists:ubicaciones,id',
-            'referido' => 'nullable|string|max:255',
             'mesa_vota' => 'nullable|integer|min:1',
+            'referido' => 'nullable|string|max:255',
             'notas' => 'nullable|string',
         ], [
             'tipo.in' => 'El tipo de registro debe ser llegada o salida.',
-            'ubicacion_id.required' => 'Debe seleccionar un punto de apoyo.',
-            'mesa_vota.integer' => 'La mesa debe ser un número.',
+            'punto_apoyo_id.required' => 'Debe seleccionar un punto de apoyo.',
+            'ubicacion_id.required' => 'Debe seleccionar un puesto de votacion.',
+            'mesa_vota.integer' => 'La mesa debe ser un numero.',
             'mesa_vota.min' => 'La mesa debe ser mayor a 0.',
         ]);
 
-        $persona = Persona::find($request->persona_id);
-        
-        if ($request->filled('mesa_vota')) {
-            $persona->mesa_votacion = $request->mesa_vota;
-            
+        $persona = Persona::findOrFail($request->persona_id);
+
+        // Guardar datos de votacion en la persona solo si llego
+        if ($request->tipo === 'llegada') {
             $ubicacion = Ubicacion::find($request->ubicacion_id);
             if ($ubicacion) {
                 $persona->puesto_votacion = $ubicacion->nombre;
             }
+            if ($request->filled('mesa_vota')) {
+                $persona->mesa_votacion = $request->mesa_vota;
+            }
+            $persona->save();
         }
-        
-        $persona->save();
 
         Registro::create([
             'persona_id' => $request->persona_id,
@@ -60,6 +65,6 @@ class RegistroController extends Controller
             'notas' => $request->notas,
         ]);
 
-        return redirect()->route('dashboard')->with('success', '✅ Registro guardado correctamente');
+        return redirect()->route('registros.create')->with('success', '✅ Registro guardado correctamente');
     }
 }

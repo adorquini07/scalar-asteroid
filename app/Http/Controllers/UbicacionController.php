@@ -3,89 +3,74 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ubicacion;
+use App\Models\PuntoApoyo;
 use Illuminate\Http\Request;
 
 class UbicacionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $ubicaciones = Ubicacion::orderBy('nombre')->get();
+        $ubicaciones = Ubicacion::with('puntoApoyo')->orderBy('nombre')->get();
         return view('ubicaciones.index', compact('ubicaciones'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('ubicaciones.create');
+        $puntosApoyo = PuntoApoyo::orderBy('nombre')->get();
+        return view('ubicaciones.create', compact('puntosApoyo'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
             'nombre' => 'required|string|max:255|unique:ubicaciones',
             'total_mesas' => 'required|integer|min:0',
+            'punto_apoyo_id' => 'required|exists:puntos_apoyo,id',
         ], [
-            'nombre.required' => 'El nombre del punto de apoyo es obligatorio.',
-            'nombre.unique' => 'Ya existe un punto de apoyo con ese nombre.',
+            'nombre.required' => 'El nombre del puesto es obligatorio.',
+            'nombre.unique' => 'Ya existe un puesto con ese nombre.',
             'total_mesas.required' => 'El total de mesas es obligatorio.',
-            'total_mesas.integer' => 'El total de mesas debe ser un número.',
-            'total_mesas.min' => 'El total de mesas debe ser 0 o mayor.',
+            'punto_apoyo_id.required' => 'Debe seleccionar un punto de apoyo.',
         ]);
 
-        Ubicacion::create($request->all());
+        Ubicacion::create($request->only(['nombre', 'total_mesas', 'punto_apoyo_id']));
 
-        return redirect()->route('ubicaciones.index')->with('success', 'Punto de apoyo creado exitosamente.');
+        return redirect()->route('ubicaciones.index')->with('success', 'Puesto de votación creado exitosamente.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Ubicacion $ubicacion)
     {
-        return view('ubicaciones.edit', compact('ubicacion'));
+        $puntosApoyo = PuntoApoyo::orderBy('nombre')->get();
+        return view('ubicaciones.edit', compact('ubicacion', 'puntosApoyo'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Ubicacion $ubicacion)
     {
         $request->validate([
             'nombre' => 'required|string|max:255|unique:ubicaciones,nombre,' . $ubicacion->id,
             'total_mesas' => 'required|integer|min:0',
+            'punto_apoyo_id' => 'required|exists:puntos_apoyo,id',
         ], [
-            'nombre.required' => 'El nombre del punto de apoyo es obligatorio.',
-            'nombre.unique' => 'Ya existe un punto de apoyo con ese nombre.',
+            'nombre.required' => 'El nombre del puesto es obligatorio.',
+            'nombre.unique' => 'Ya existe un puesto con ese nombre.',
             'total_mesas.required' => 'El total de mesas es obligatorio.',
-            'total_mesas.integer' => 'El total de mesas debe ser un número.',
-            'total_mesas.min' => 'El total de mesas debe ser 0 o mayor.',
+            'punto_apoyo_id.required' => 'Debe seleccionar un punto de apoyo.',
         ]);
 
-        $ubicacion->update($request->all());
+        $ubicacion->update($request->only(['nombre', 'total_mesas', 'punto_apoyo_id']));
 
-        return redirect()->route('ubicaciones.index')->with('success', 'Punto de apoyo actualizado exitosamente.');
+        return redirect()->route('ubicaciones.index')->with('success', 'Puesto de votación actualizado exitosamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Ubicacion $ubicacion)
     {
         if ($ubicacion->registros()->exists()) {
             return redirect()->route('ubicaciones.index')
-                ->with('error', 'No se puede eliminar porque hay registros asociados a este punto de apoyo.');
+                ->with('error', 'No se puede eliminar porque hay registros asociados a este puesto.');
         }
 
         $ubicacion->delete();
 
-        return redirect()->route('ubicaciones.index')->with('success', 'Punto de apoyo eliminado exitosamente.');
+        return redirect()->route('ubicaciones.index')->with('success', 'Puesto de votación eliminado exitosamente.');
     }
 }

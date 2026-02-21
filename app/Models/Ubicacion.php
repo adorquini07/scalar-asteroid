@@ -11,7 +11,13 @@ class Ubicacion extends Model
     protected $fillable = [
         'nombre',
         'total_mesas',
+        'punto_apoyo_id',
     ];
+
+    public function puntoApoyo()
+    {
+        return $this->belongsTo(PuntoApoyo::class, 'punto_apoyo_id');
+    }
 
     public function registros()
     {

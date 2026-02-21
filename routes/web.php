@@ -5,7 +5,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RegistroController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\UbicacionController; // Add this
+use App\Http\Controllers\UbicacionController;
+use App\Models\Ubicacion;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,6 +20,12 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/votacion-dashboard', [\App\Http\Controllers\VotacionDashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('votacion.dashboard');
+
+// API route: obtener ubicaciones por punto_apoyo_id (para cascading dropdown)
+Route::get('/api/ubicaciones-por-punto/{puntoApoyoId}', function ($puntoApoyoId) {
+    $ubicaciones = Ubicacion::where('punto_apoyo_id', $puntoApoyoId)->orderBy('nombre')->get();
+    return response()->json($ubicaciones);
+})->middleware('auth')->name('api.ubicaciones.por.punto');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -36,7 +43,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/registros', [RegistroController::class, 'index'])->name('registros.index');
         Route::resource('personas', PersonaController::class);
         Route::resource('users', UserController::class);
-        Route::resource('ubicaciones', UbicacionController::class); // Add this
+        Route::resource('ubicaciones', UbicacionController::class);
     });
 });
 
