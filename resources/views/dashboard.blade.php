@@ -58,13 +58,16 @@
                                             <span class="font-medium">En {{$ultimo->ubicacion ? $ultimo->ubicacion->nombre : 'Sin ubicación'}}</span>
                                         </div>
                                     @else
-                                        <div class="space-y-2">
-                                            <div class="flex items-center text-indigo-400 font-bold bg-indigo-500/10 p-3 rounded-lg border border-indigo-500/20">
-                                                <i class="bi bi-telephone-fill me-2"></i>
-                                                <a href="tel:{{ $persona->celular }}" class="hover:underline">{{ $persona->celular ?? 'Sin celular' }}</a>
+                                        <div class="space-y-3">
+                                            <div class="p-3 rounded-xl border border-indigo-500/20 shadow-inner" style="background: rgba(79, 70, 229, 0.05);">
+                                                <div class="text-[10px] text-indigo-400 font-bold uppercase tracking-wider mb-1 opacity-70">Llamada Rápida</div>
+                                                <div class="flex items-center text-indigo-300 font-bold">
+                                                    <i class="bi bi-telephone-fill me-2 fs-6"></i>
+                                                    <a href="tel:{{ $persona->celular }}" class="text-lg hover:text-white transition-colors">{{ $persona->celular ?? 'Sin celular' }}</a>
+                                                </div>
                                             </div>
-                                            <div class="text-xs text-gray-400 italic">
-                                                <i class="bi bi-info-circle me-1"></i> En movimiento desde {{ $ultimo->created_at->diffForHumans() }}
+                                            <div class="text-xs text-gray-500 flex items-center bg-black/20 p-2 rounded-lg">
+                                                <i class="bi bi-clock-history me-2"></i> En movimiento desde {{ $ultimo->created_at->diffForHumans() }}
                                             </div>
                                         </div>
                                     @endif

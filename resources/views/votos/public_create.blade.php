@@ -140,6 +140,36 @@
             border-radius: 1rem;
             padding: 1rem;
         }
+
+        .btn-mesa-grid {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            color: #94a3b8;
+            border-radius: 0.75rem;
+            padding: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mesa-grid:hover {
+            border-color: rgba(79, 70, 229, 0.5);
+            color: #ffffff;
+            background-color: rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-mesa-grid.active {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border-color: transparent !important;
+            color: #ffffff !important;
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .text-indigo-400 { color: #818cf8 !important; }
+        .bg-indigo-600 { background-color: #4f46e5 !important; }
     </style>
 </head>
 
@@ -198,23 +228,30 @@
                 <select id="ubicacion_id" name="ubicacion_id" class="form-select select2" required>
                     <option value="">Seleccione el puesto...</option>
                     @foreach($ubicaciones as $ubicacion)
-                        <option value="{{ $ubicacion->id }}">{{ $ubicacion->nombre }}</option>
+                        <option value="{{ $ubicacion->id }}" data-mesas="{{ $ubicacion->total_mesas }}">
+                            {{ $ubicacion->nombre }}</option>
                     @endforeach
                 </select>
                 @error('ubicacion_id') <div class="text-danger x-small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- Mesa -->
-            <div class="mb-4">
-                <label for="mesa" class="form-label">Número de Mesa</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-transparent border-end-0"
-                        style="border-radius: 1rem 0 0 1rem; border: 1px solid var(--glass-border);">
-                        <i class="bi bi-hash text-indigo-400"></i>
-                    </span>
-                    <input type="number" id="mesa" name="mesa" class="form-control border-start-0" placeholder="Ej: 5"
-                        value="{{ old('mesa') }}" required min="1">
+            <div id="mesa-container" class="mb-4 d-none">
+                <label class="form-label">Número de Mesa</label>
+                <div id="mesa-grid" class="row row-cols-4 row-cols-sm-5 g-2 mb-3">
+                    <!-- Botones generados por JS -->
                 </div>
+
+                <div id="mesa-selected-badge" class="d-none animate-fade-in">
+                    <div class="d-flex align-items-center justify-content-center p-3 rounded-4"
+                        style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3);">
+                        <span class="badge bg-indigo-600 rounded-pill px-3 py-2 me-2">MESA <span id="mesa-val-display"
+                                class="fs-6">0</span></span>
+                        <span class="text-indigo-400 fw-bold small uppercase">¡Seleccionada!</span>
+                    </div>
+                </div>
+
+                <input type="hidden" id="mesa" name="mesa" value="{{ old('mesa') }}" required>
                 @error('mesa') <div class="text-danger x-small mt-1">{{ $message }}</div> @enderror
             </div>
 
@@ -222,20 +259,65 @@
                 <i class="bi bi-send-fill me-2"></i> REGISTRAR REPORTE
             </button>
         </form>
-
-        <div class="mt-4 text-center">
-            <p class="text-secondary x-small mb-0">Powered by Antigravity OS</p>
-        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function () {
+            // Select2 Initialization
             $('.select2').select2({
                 theme: 'bootstrap-5',
                 width: '100%',
                 dropdownParent: $('.auth-card')
+            });
+
+            // Fix Select2 Search Bar Contrast
+            $(document).on('select2:open', () => {
+                document.querySelector('.select2-search__field').focus();
+                $('.select2-search__field').css({
+                    'background-color': '#1a1a1a',
+                    'color': '#ffffff',
+                    'border': '1px solid rgba(255,255,255,0.1)'
+                });
+            });
+
+            // Mesa Grid Logic
+            $('#ubicacion_id').on('change', function () {
+                const totalMesas = parseInt($(this).find(':selected').data('mesas')) || 0;
+                const $container = $('#mesa-container');
+                const $grid = $('#mesa-grid');
+                const $hiddenInput = $('#mesa');
+
+                $grid.empty();
+                $hiddenInput.val('');
+                $('#mesa-selected-badge').addClass('d-none');
+
+                if (totalMesas > 0) {
+                    for (let i = 1; i <= totalMesas; i++) {
+                        $grid.append(`
+                            <div class="col">
+                                <button type="button" class="btn btn-mesa-grid w-100" data-num="${i}">
+                                    ${i}
+                                </button>
+                            </div>
+                        `);
+                    }
+                    $container.removeClass('d-none').hide().fadeIn(400);
+                } else {
+                    $container.fadeOut(300);
+                }
+            });
+
+            // Selection Logic
+            $(document).on('click', '.btn-mesa-grid', function () {
+                $('.btn-mesa-grid').removeClass('active');
+                $(this).addClass('active');
+
+                const val = $(this).data('num');
+                $('#mesa').val(val);
+                $('#mesa-val-display').text(val);
+                $('#mesa-selected-badge').removeClass('d-none').hide().fadeIn(300);
             });
         });
     </script>

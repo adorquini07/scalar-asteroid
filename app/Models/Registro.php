@@ -2,17 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Registro extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'persona_id',
         'user_id',
-        'tipo',
+        'referido',
         'punto_apoyo_id',
         'ubicacion_id',
-        'notas',
+        'mesa_vota',
+        'tipo',
     ];
 
     public function persona()
@@ -23,6 +27,11 @@ class Registro extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function puntoApoyo()
+    {
+        return $this->belongsTo(PuntoApoyo::class);
     }
 
     public function ubicacion()

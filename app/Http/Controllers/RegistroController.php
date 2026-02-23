@@ -31,7 +31,7 @@ class RegistroController extends Controller
             'tipo' => 'required|in:llegada,salida',
             'punto_apoyo_id' => 'required|exists:puntos_apoyo,id',
             'ubicacion_id' => 'nullable|exists:ubicaciones,id',
-            'notas' => 'nullable|string',
+            'mesa_vota' => 'nullable|integer|min:1',
         ], [
             'tipo.in' => 'El tipo de registro debe ser llegada o salida.',
             'punto_apoyo_id.required' => 'Debe seleccionar un punto de apoyo.',
@@ -42,8 +42,8 @@ class RegistroController extends Controller
             'user_id' => auth()->id(),
             'punto_apoyo_id' => $request->punto_apoyo_id,
             'ubicacion_id' => $request->ubicacion_id,
+            'mesa_vota' => $request->mesa_vota,
             'tipo' => $request->tipo,
-            'notas' => $request->notas,
         ]);
 
         return redirect()->route('registros.create')->with('success', '✅ Registro guardado correctamente');

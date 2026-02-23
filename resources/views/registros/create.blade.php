@@ -80,29 +80,54 @@
                                 <x-input-error :messages="$errors->get('punto_apoyo_id')" class="mt-2" />
                             </div>
 
-                            {{-- SECCIÓN OPCIONAL: DESTINO (Si es necesario) --}}
-                            <div class="mb-4">
-                                <label for="ubicacion_id" class="form-label fw-bold mb-2 text-secondary small">
-                                    <i class="bi bi-geo-fill me-1"></i> {{ __('Ubicación / Puesto (Opcional)') }}
+                            {{-- SECCIÓN DE VOTACIÓN (SOLO LLEGADA) --}}
+                            <div id="seccion-votacion" class="d-none">
+                                <hr class="my-4 border-secondary opacity-25">
+                                <h5 class="text-primary fw-bold mb-3 small uppercase tracking-wider">Información de Votación</h5>
+
+                                {{-- Referido / Votante --}}
+                                <div class="mb-4">
+                                    <label for="referido" class="form-label fw-bold mb-2">
+                                        <i class="bi bi-person-plus-fill text-primary me-1"></i> {{ __('Nombre del Referido / Votante') }}
                                     </label>
-                            <select id="ubicacion_id" name="ubicacion_id"
-                                        class="form-select select2-bs5">
-                                    <option value="">Seleccione el puesto...</option>
+                                    <input type="text" id="referido" name="referido" class="form-control rounded-4 border-0 p-3" 
+                                           style="background-color: #1a1a1a; color: #f3f4f6; border: 1px solid #334155 !important;"
+                                           placeholder="Ej: Pedro Pérez" value="{{ old('referido') }}">
+                                    <x-input-error :messages="$errors->get('referido')" class="mt-2" />
+                                </div>
+
+                                {{-- Puesto de Votación --}}
+                                <div class="mb-4">
+                                    <label for="ubicacion_id" class="form-label fw-bold mb-2">
+                                        <i class="bi bi-geo-fill text-primary me-1"></i> {{ __('Puesto de Votación') }}
+                                    </label>
+                                    <select id="ubicacion_id" name="ubicacion_id" class="form-select select2-bs5">
+                                        <option value="">Seleccione el puesto...</option>
                                     </select>
                                     <x-input-error :messages="$errors->get('ubicacion_id')" class="mt-2" />
-                            </div>
+                                </div>
 
-                            <div class=" mb-3">
-                                        <label for="notas" class="form-label fw-bold mb-2">
-                                            <i class="bi bi-chat-left-text-fill text-primary me-1"></i> {{
-                                            __('OBSERVACIONES (OPCIONAL)') }}
-                                        </label>
-                                        <textarea id="notas" name="notas" class="form-control rounded-4 border-0 p-4"
-                                            style="background-color: #151515; color: #f3f4f6; min-height: 100px; border: 1px solid #1a1a1a !important;"
-                                            placeholder="Ej: Salió con gasolina, Llegó sin problemas...">{{ old('notas') }}</textarea>
-                                        <x-input-error :messages="$errors->get('notas')" class="mt-2" />
+                                {{-- Mesa Grid --}}
+                                <div id="mesa-container" class="mb-4 d-none">
+                                    <label class="form-label fw-bold mb-2 text-secondary small">
+                                        <i class="bi bi-hash me-1"></i> {{ __('Seleccione la Mesa') }}
+                                    </label>
+                                    <div id="mesa-grid" class="row row-cols-4 row-cols-sm-5 g-2">
+                                        <!-- Generado por JS -->
+                                    </div>
+                                    
+                                    <div id="mesa-alert" class="mt-3 p-3 rounded-4 d-none animate-fade-in"
+                                        style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.2);">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="badge bg-primary rounded-pill px-3 py-2 me-2">MESA <span
+                                                    id="mesa-val-display" class="fs-6">0</span></span>
+                                            <span class="text-primary fw-bold small">¡Seleccionada!</span>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="mesa_vota" name="mesa_vota">
+                                    <x-input-error :messages="$errors->get('mesa_vota')" class="mt-2" />
+                                </div>
                             </div>
-
 
                             {{-- SUBMIT --}}
                             <div class="mt-5 border-top pt-4">
@@ -126,6 +151,27 @@
 
         .hover-scale:active {
             transform: scale(0.98);
+        }
+
+        .alert-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+
+        .select2-search__field {
+            background-color: #111827 !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 0.5rem !important;
+            padding: 8px 12px !important;
+        }
+
+        .select2-search--dropdown {
+            background-color: #121212 !important;
+            padding: 10px !important;
         }
 
         /* Custom State Buttons - Dark Mode Refined */
@@ -172,8 +218,16 @@
 
         .select2-container--bootstrap-5 .select2-search__field {
             background-color: #111827 !important;
-            color: white !important;
-            border-color: #374151 !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 0.5rem !important;
+            padding: 8px 12px !important;
+            outline: none !important;
+        }
+
+        .select2-search--dropdown {
+            background-color: #1f2937 !important;
+            padding: 10px !important;
         }
 
         /* Mesa Grid Refined */
@@ -235,22 +289,92 @@
 
             $('#persona_id, #punto_apoyo_id, #ubicacion_id').select2(s2Config);
 
+            // ─── Tipo Change (Llegada/Salida) ───
+            $('input[name="tipo"]').on('change', function () {
+                const tipo = $(this).val();
+                const $votacion = $('#seccion-votacion');
+
+                if (tipo === 'llegada') {
+                    $votacion.removeClass('d-none').hide().fadeIn(400);
+                } else {
+                    $votacion.fadeOut(300, function() {
+                        $(this).addClass('d-none');
+                        // Reset fields
+                        $('#referido').val('');
+                        $('#ubicacion_id').val('').trigger('change');
+                        $('#mesa_vota').val('');
+                        $('.btn-mesa').removeClass('selected');
+                        $('#mesa-alert').addClass('d-none');
+                    });
+                }
+            });
+
             // ─── AJAX Puestos ───
             $('#punto_apoyo_id').on('change', function () {
                 const puntoId = $(this).val();
                 const $puestoSelect = $('#ubicacion_id');
+                const $mesaContainer = $('#mesa-container');
 
                 $puestoSelect.empty().append('<option value="">Cargando puestos...</option>').trigger('change');
+                $mesaContainer.addClass('d-none');
 
                 if (!puntoId) return;
 
                 $.getJSON('/api/ubicaciones-por-punto/' + puntoId, function (data) {
                     $puestoSelect.empty().append('<option value="">Seleccione el puesto...</option>');
                     $.each(data, function (i, item) {
-                        $puestoSelect.append(`<option value="${item.id}">${item.nombre}</option>`);
+                        $puestoSelect.append(`<option value="${item.id}" data-mesas="${item.total_mesas}">${item.nombre}</option>`);
                     });
                     $puestoSelect.trigger('change');
                 });
+            });
+
+            // ─── Mesa Grid Logic ───
+            $('#ubicacion_id').on('change', function () {
+                const totalMesas = parseInt($(this).find(':selected').data('mesas')) || 0;
+                const $grid = $('#mesa-grid');
+                const $container = $('#mesa-container');
+                const $hiddenInput = $('#mesa_vota');
+
+                $grid.empty();
+                $hiddenInput.val('');
+                $('#mesa-alert').addClass('d-none');
+
+                if (totalMesas > 0) {
+                    for (let i = 1; i <= totalMesas; i++) {
+                        $grid.append(`
+                            <div class="col">
+                                <button type="button" class="btn btn-mesa w-100" data-num="${i}">
+                                    ${i}
+                                </button>
+                            </div>
+                        `);
+                    }
+                    $container.removeClass('d-none').hide().fadeIn(300);
+                } else {
+                    $container.addClass('d-none');
+                }
+            });
+
+            // Selection Logic
+            $(document).on('click', '.btn-mesa', function () {
+                $('.btn-mesa').removeClass('selected');
+                $(this).addClass('selected');
+
+                const val = $(this).data('num');
+                $('#mesa_vota').val(val);
+                $('#mesa-val-display').text(val);
+                $('#mesa-alert').removeClass('d-none').hide().fadeIn(200);
+            });
+
+            // Select2 Search Fix
+            $(document).on('select2:open', () => {
+                const searchField = document.querySelector('.select2-search__field');
+                if (searchField) {
+                    searchField.focus();
+                    searchField.style.backgroundColor = '#111827';
+                    searchField.style.color = 'white';
+                }
             });
         });
     </script>
