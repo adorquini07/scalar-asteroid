@@ -53,21 +53,6 @@
                             <x-input-error :messages="$errors->get('placa')" class="mt-2" />
                         </div>
 
-                        <!-- Puesto de Votación -->
-                        <div>
-                            <x-input-label for="puesto_votacion" :value="__('Puesto de Votación (Opcional)')" />
-                            <x-text-input id="puesto_votacion" class="block mt-1 w-full" type="text" name="puesto_votacion"
-                                :value="old('puesto_votacion')" placeholder="Ej: Escuela La Esperanza" />
-                            <x-input-error :messages="$errors->get('puesto_votacion')" class="mt-2" />
-                        </div>
-
-                        <!-- Mesa de Votación -->
-                        <div>
-                            <x-input-label for="mesa_votacion" :value="__('Mesa de Votación (Opcional)')" />
-                            <x-text-input id="mesa_votacion" class="block mt-1 w-full" type="number" name="mesa_votacion"
-                                :value="old('mesa_votacion')" placeholder="Ej: 123" min="1" />
-                            <x-input-error :messages="$errors->get('mesa_votacion')" class="mt-2" />
-                        </div>
 
                         <!-- Activo -->
                         <div

@@ -60,12 +60,15 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $persona->cedula }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $persona->nombre }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $persona->apodo ?? '-' }}</td>
+                                            {{ $persona->apodo ?? '-' }}
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $persona->celular ?? '-' }}</td>
+                                            {{ $persona->celular ?? '-' }}
+                                        </td>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600 dark:text-gray-200">
-                                            {{ $persona->placa ?? '-' }}</td>
+                                            {{ $persona->placa ?? '-' }}
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                             @if($persona->activo)
                                                 <span
@@ -106,7 +109,8 @@
                 <!-- Vista de tarjetas para móvil -->
                 <div class="md:hidden p-4 text-gray-900 dark:text-gray-100">
                     @forelse($personas as $persona)
-                        <div class="mb-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg {{ $persona->activo ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900' }}">
+                        <div
+                            class="mb-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg {{ $persona->activo ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900' }}">
                             <div class="flex justify-between items-start mb-3">
                                 <div class="flex-1 min-w-0">
                                     <h3 class="font-bold text-base truncate">{{ $persona->nombre }}</h3>
@@ -114,25 +118,22 @@
                                 </div>
                                 <div class="ml-2 flex-shrink-0">
                                     @if($persona->activo)
-                                        <span class="px-2 py-1 text-xs font-semibold rounded-md bg-green-100 text-green-800">Activo</span>
+                                        <span
+                                            class="px-2 py-1 text-xs font-semibold rounded-md bg-green-100 text-green-800">Activo</span>
                                     @else
-                                        <span class="px-2 py-1 text-xs font-semibold rounded-md bg-red-100 text-red-800">Inactivo</span>
+                                        <span
+                                            class="px-2 py-1 text-xs font-semibold rounded-md bg-red-100 text-red-800">Inactivo</span>
                                     @endif
                                 </div>
                             </div>
-                            
+
                             <div class="space-y-1 text-sm mb-3">
                                 <p><span class="font-medium">Apodo:</span> {{ $persona->apodo ?? '-' }}</p>
                                 <p><span class="font-medium">Celular:</span> {{ $persona->celular ?? '-' }}</p>
-                                <p><span class="font-medium">Placa:</span> <span class="font-mono">{{ $persona->placa ?? '-' }}</span></p>
-                                @if($persona->puesto_votacion)
-                                <p class="text-xs text-purple-600 dark:text-purple-400">
-                                    <span class="font-medium">Vota en:</span> {{ $persona->puesto_votacion }}
-                                    @if($persona->mesa_votacion) - Mesa #{{ $persona->mesa_votacion }}@endif
-                                </p>
-                                @endif
+                                <p><span class="font-medium">Placa:</span> <span
+                                        class="font-mono">{{ $persona->placa ?? '-' }}</span></p>
                             </div>
-                            
+
                             <div class="flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
                                 <a href="{{ route('personas.edit', $persona->id) }}"
                                     class="flex-1 text-center px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700">

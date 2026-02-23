@@ -12,8 +12,6 @@ class Persona extends Model
         'apodo',
         'celular',
         'placa',
-        'puesto_votacion',
-        'mesa_votacion',
         'activo',
     ];
 

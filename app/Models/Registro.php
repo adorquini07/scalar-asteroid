@@ -10,9 +10,8 @@ class Registro extends Model
         'persona_id',
         'user_id',
         'tipo',
-        'referido',
+        'punto_apoyo_id',
         'ubicacion_id',
-        'mesa_vota',
         'notas',
     ];
 

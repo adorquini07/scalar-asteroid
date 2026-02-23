@@ -11,7 +11,7 @@ class VotacionDashboardController extends Controller
 {
     public function index()
     {
-        // Obtener todas las ubicaciones con sus registros de llegada
+        // Obtener todas las ubicaciones
         $ubicaciones = Ubicacion::orderBy('nombre')->get();
 
         $estadisticas = [];
@@ -20,23 +20,22 @@ class VotacionDashboardController extends Controller
         foreach ($ubicaciones as $ubicacion) {
             $mesasData = [];
 
-            // Obtener registros de llegada para este puesto
-            $registrosPuesto = \App\Models\Registro::where('ubicacion_id', $ubicacion->id)
-                ->where('tipo', 'llegada')
+            // Obtener registros de votos para este puesto
+            $votosPuesto = \App\Models\Voto::where('ubicacion_id', $ubicacion->id)
                 ->get();
 
-            $totalUbicacion = $registrosPuesto->count();
+            $totalUbicacion = $votosPuesto->count();
             $totalGeneral += $totalUbicacion;
 
             if ($totalUbicacion > 0) {
                 // Agrupar por mesa
-                $registrosPorMesa = $registrosPuesto->groupBy('mesa_vota');
+                $votosPorMesa = $votosPuesto->groupBy('mesa');
 
-                foreach ($registrosPorMesa as $numMesa => $registros) {
+                foreach ($votosPorMesa as $numMesa => $votos) {
                     $mesasData[$numMesa] = [
                         'numero' => $numMesa,
-                        'total' => $registros->count(),
-                        'personas' => $registros // Aquí pasamos los registros, que tienen 'referido'
+                        'total' => $votos->count(),
+                        'votos' => $votos
                     ];
                 }
 

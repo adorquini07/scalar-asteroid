@@ -13,6 +13,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Link Público para Líderes
+Route::get('/reportar-voto', [\App\Http\Controllers\PublicVoteController::class, 'create'])->name('votos.public_create');
+Route::post('/reportar-voto', [\App\Http\Controllers\PublicVoteController::class, 'store'])->name('votos.public_store');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');

@@ -80,69 +80,29 @@
                                 <x-input-error :messages="$errors->get('punto_apoyo_id')" class="mt-2" />
                             </div>
 
-                            {{-- 4. REFERIDO --}}
+                            {{-- SECCIÓN OPCIONAL: DESTINO (Si es necesario) --}}
                             <div class="mb-4">
-                                <label for="referido" class="form-label fw-bold mb-2">
-                                    <i class="bi bi-people-fill text-primary me-1"></i>
-                                    {{ __('Referido / Acompañante') }}
-                                </label>
-                                <input type="text" id="referido" name="referido"
-                                    class="form-control form-control-lg rounded-3 fs-6"
-                                    placeholder="¿Quién lo trajo? (Opcional)" value="{{ old('referido') }}">
-                                <x-input-error :messages="$errors->get('referido')" class="mt-2" />
-                            </div>
-
-                            {{-- SECCIÓN LLEGADA --}}
-                            <div id="seccion-llegada" class="collapse mt-4">
-                                <div class="card border-0 rounded-4 shadow-sm" style="background-color: #151515; border: 1px solid #1a1a1a !important;">
-                                    <div class="card-body p-4">
-                                        <div class="d-flex align-items-center mb-3">
-                                            <div class="bg-primary text-white p-2 rounded-3 me-2">
-                                                <i class="bi bi-card-checklist"></i>
-                                            </div>
-                                            <h6 class="fw-bold text-primary mb-0">Información de Votación</h6>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="ubicacion_id"
-                                                class="form-label fw-bold text-secondary small">¿Dónde Vota?</label>
-                                            <select id="ubicacion_id" name="ubicacion_id"
-                                                class="form-select select2-bs5">
-                                                <option value="">Seleccione el puesto...</option>
-                                            </select>
-                                        </div>
-
-                                        <div id="mesa-container" class="collapse mt-3">
-                                            <label class="form-label fw-bold text-secondary small mb-2">Seleccione el
-                                                Número de Mesa</label>
-                                            <div id="mesa-lista" class="row row-cols-4 row-cols-sm-5 row-cols-md-6 g-2">
-                                                {{-- Mesas vía JS --}}
-                                            </div>
-                                            <input type="hidden" id="mesa_vota" name="mesa_vota">
-
-                                            <div id="mesa-alert"
-                                                class="mt-3 p-2 bg-white rounded-pill text-center d-none border shadow-sm">
-                                                <span class="badge bg-primary rounded-pill me-2 px-3 py-2">MESA <span
-                                                        id="mesa-val-display" class="fs-6">0</span></span>
-                                                <span class="text-primary fw-bold">¡Seleccionada!</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- SECCIÓN SALIDA --}}
-                            <div id="seccion-salida" class="collapse mt-4">
-                                <div class="mb-3">
-                                    <label for="notas" class="form-label fw-bold mb-2">
-                                        <i class="bi bi-chat-left-text-fill text-primary me-1"></i> {{ __('OBSERVACIONES DE SALIDA') }}
+                                <label for="ubicacion_id" class="form-label fw-bold mb-2 text-secondary small">
+                                    <i class="bi bi-geo-fill me-1"></i> {{ __('Ubicación / Puesto (Opcional)') }}
                                     </label>
-                                    <textarea id="notas" name="notas" class="form-control rounded-4 border-0 p-4" 
-                                              style="background-color: #151515; color: #f3f4f6; min-height: 120px; border: 1px solid #1a1a1a !important;"
-                                              placeholder="Escribe aquí cualquier nota sobre la salida...">{{ old('notas') }}</textarea>
-                                    <x-input-error :messages="$errors->get('notas')" class="mt-2" />
-                                </div>
+                            <select id="ubicacion_id" name="ubicacion_id"
+                                        class="form-select select2-bs5">
+                                    <option value="">Seleccione el puesto...</option>
+                                    </select>
+                                    <x-input-error :messages="$errors->get('ubicacion_id')" class="mt-2" />
                             </div>
+
+                            <div class=" mb-3">
+                                        <label for="notas" class="form-label fw-bold mb-2">
+                                            <i class="bi bi-chat-left-text-fill text-primary me-1"></i> {{
+                                            __('OBSERVACIONES (OPCIONAL)') }}
+                                        </label>
+                                        <textarea id="notas" name="notas" class="form-control rounded-4 border-0 p-4"
+                                            style="background-color: #151515; color: #f3f4f6; min-height: 100px; border: 1px solid #1a1a1a !important;"
+                                            placeholder="Ej: Salió con gasolina, Llegó sin problemas...">{{ old('notas') }}</textarea>
+                                        <x-input-error :messages="$errors->get('notas')" class="mt-2" />
+                            </div>
+
 
                             {{-- SUBMIT --}}
                             <div class="mt-5 border-top pt-4">
@@ -266,11 +226,6 @@
 
     <script>
         $(document).ready(function () {
-            // Inicializar Bootstrap Collapse components si es necesario
-            const $llegadaCollapse = $('#seccion-llegada');
-            const $salidaCollapse = $('#seccion-salida');
-            const $mesaCollapse = $('#mesa-container');
-
             const s2Config = {
                 theme: 'bootstrap-5',
                 width: '100%',
@@ -280,74 +235,22 @@
 
             $('#persona_id, #punto_apoyo_id, #ubicacion_id').select2(s2Config);
 
-            // ─── Control de Visibilidad ───
-            function updateFormLayout() {
-                const tipo = $('input[name="tipo"]:checked').val();
-                if (tipo === 'llegada') {
-                    $llegadaCollapse.show(300);
-                    $salidaCollapse.hide(200);
-                    $('#ubicacion_id').prop('required', true);
-                } else if (tipo === 'salida') {
-                    $llegadaCollapse.hide(200);
-                    $salidaCollapse.show(300);
-                    $('#ubicacion_id').prop('required', false);
-                }
-            }
-            $('input[name="tipo"]').on('change', updateFormLayout);
-
             // ─── AJAX Puestos ───
             $('#punto_apoyo_id').on('change', function () {
                 const puntoId = $(this).val();
                 const $puestoSelect = $('#ubicacion_id');
 
                 $puestoSelect.empty().append('<option value="">Cargando puestos...</option>').trigger('change');
-                $mesaCollapse.hide();
-                $('#mesa_vota').val('');
 
                 if (!puntoId) return;
 
                 $.getJSON('/api/ubicaciones-por-punto/' + puntoId, function (data) {
                     $puestoSelect.empty().append('<option value="">Seleccione el puesto...</option>');
                     $.each(data, function (i, item) {
-                        $puestoSelect.append(`<option value="${item.id}" data-mesas="${item.total_mesas}">${item.nombre}</option>`);
+                        $puestoSelect.append(`<option value="${item.id}">${item.nombre}</option>`);
                     });
                     $puestoSelect.trigger('change');
                 });
-            });
-
-            // ─── Mesas ───
-            $('#ubicacion_id').on('change', function () {
-                const totalMesas = parseInt($(this).find(':selected').data('mesas')) || 0;
-                const $lista = $('#mesa-lista');
-                $lista.empty();
-                $('#mesa_vota').val('');
-                $('#mesa-alert').addClass('d-none');
-
-                if (totalMesas > 0) {
-                    for (let i = 1; i <= totalMesas; i++) {
-                        $lista.append(`
-                            <div class="col px-1">
-                                <button type="button" class="btn btn-outline-secondary btn-mesa w-100" data-num="${i}">
-                                    ${i}
-                                </button>
-                            </div>
-                        `);
-                    }
-                    $mesaCollapse.show(300);
-                } else {
-                    $mesaCollapse.hide(200);
-                }
-            });
-
-            // ─── Selección de Mesa ───
-            $(document).on('click', '.btn-mesa', function () {
-                $('.btn-mesa').removeClass('selected btn-primary').addClass('btn-outline-secondary');
-                $(this).addClass('selected btn-primary').removeClass('btn-outline-secondary');
-
-                const val = $(this).data('num');
-                $('#mesa_vota').val(val);
-                $('#mesa-val-display').text(val);
-                $('#mesa-alert').removeClass('d-none');
             });
         });
     </script>
