@@ -30,6 +30,7 @@ class RegistroController extends Controller
             'persona_id' => 'required|exists:personas,id',
             'tipo' => 'required|in:llegada,salida',
             'punto_apoyo_id' => 'required|exists:puntos_apoyo,id',
+            'referido' => 'nullable|string',
             'ubicacion_id' => 'nullable|exists:ubicaciones,id',
             'mesa_vota' => 'nullable|integer|min:1',
         ], [
@@ -39,6 +40,7 @@ class RegistroController extends Controller
 
         Registro::create([
             'persona_id' => $request->persona_id,
+            'referido' => $request->referido,
             'user_id' => auth()->id(),
             'punto_apoyo_id' => $request->punto_apoyo_id,
             'ubicacion_id' => $request->ubicacion_id,
