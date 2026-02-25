@@ -8,9 +8,18 @@ use Illuminate\Http\Request;
 
 class UbicacionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $ubicaciones = Ubicacion::with('puntoApoyo')->orderBy('nombre')->get();
+        $ubicaciones = Ubicacion::query()
+            ->with('puntoApoyo')
+            ->withCount('registros')
+            ->when($request->search, function ($query, $search) {
+                return $query->where('nombre', 'like', "%{$search}%");
+            })
+            ->orderBy('nombre')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('ubicaciones.index', compact('ubicaciones'));
     }
 
