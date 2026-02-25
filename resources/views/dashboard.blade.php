@@ -77,6 +77,21 @@
                                             </div>
                                         </div>
 
+                                        <!-- Call Prompt (Always Visible) -->
+                                        <div
+                                            class="call-bridge d-flex align-items-center p-2 px-3 rounded-4 mb-3 border-glass-thin bg-dark-soft">
+                                            <div class="icon-box-sm bg-indigo-soft text-indigo-400 me-2"
+                                                style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-telephone-fill text-xs"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <a href="tel:{{ $persona->celular }}"
+                                                    class="text-white fw-bold small text-decoration-none hover-indigo">
+                                                    {{ $persona->celular ?? 'Sin Celular' }}
+                                                </a>
+                                            </div>
+                                        </div>
+
                                         <!-- Referido & Mesa -->
                                         <div class="row g-2">
                                             @if($ultimo->referido)
@@ -99,7 +114,26 @@
                                         </div>
                                     </div>
                                 @else
+                                    @php
+                                        // Find the last "llegada" before this departure
+                                        $ultimaLlegada = $persona->registros->where('tipo', 'llegada')->first();
+                                    @endphp
                                     <div class="space-y-3">
+                                        <!-- Last Location -->
+                                        <div class="info-well d-flex align-items-center p-3 rounded-4 mb-3">
+                                            <div class="icon-box bg-secondary-soft text-secondary me-3">
+                                                <i class="bi bi-geo-alt"></i>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="text-xs text-secondary text-uppercase fw-bold mb-1">Último Punto de
+                                                    Apoyo
+                                                </div>
+                                                <div class="text-white fw-medium truncate small opacity-75">
+                                                    {{ $ultimaLlegada && $ultimaLlegada->ubicacion ? $ultimaLlegada->ubicacion->nombre : 'Sin ubicación' }}
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <!-- Call Prompt -->
                                         <div class="call-bridge d-flex align-items-center p-3 rounded-4 mb-3">
                                             <div class="icon-box bg-indigo-soft text-indigo-400 me-3 pulse-animation">
@@ -116,10 +150,19 @@
                                             <i class="bi bi-chevron-right text-secondary small"></i>
                                         </div>
 
-                                        <div class="d-flex align-items-center bg-dark-soft p-2 px-3 rounded-4 border-glass-thin">
-                                            <i class="bi bi-clock-history text-secondary me-2"></i>
-                                            <span class="text-xs text-secondary">Fuera hace
-                                                {{ $ultimo->created_at->diffForHumans() }}</span>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div
+                                                    class="d-flex align-items-center bg-dark-soft p-2 px-3 rounded-4 border-glass-thin h-100">
+                                                    <i class="bi bi-box-arrow-right text-danger me-2 text-xs"></i>
+                                                    <div class="min-w-0">
+                                                        <div class="text-[9px] text-secondary text-uppercase fw-bold">Salió</div>
+                                                        <span class="text-[10px] text-secondary">
+                                                            {{ $ultimo->created_at->diffForHumans() }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 @endif
@@ -249,6 +292,10 @@
             background: rgba(16, 185, 129, 0.1);
         }
 
+        .bg-secondary-soft {
+            background: rgba(156, 163, 175, 0.1);
+        }
+
         .bg-indigo-soft {
             background: rgba(99, 102, 241, 0.1);
         }
@@ -341,6 +388,10 @@
 
         .text-[10px] {
             font-size: 10px;
+        }
+
+        .text-[9px] {
+            font-size: 9px;
         }
 
         .uppercase {
