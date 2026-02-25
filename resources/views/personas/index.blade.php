@@ -1,164 +1,377 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <h2 class="font-semibold text-lg sm:text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Gestión de Personas / Motociclistas') }}
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <h2 class="h4 font-weight-bold mb-0 text-white">
+                <i class="bi bi-people-fill me-2 text-primary"></i>{{ __('Gestión de Personas / Motociclistas') }}
             </h2>
             <a href="{{ route('personas.create') }}"
-                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 transition ease-in-out duration-150 shadow-md">
-                + Nueva Persona
+                class="btn btn-primary btn-lg px-4 rounded-3 fw-bold shadow-lg transition-transform hover-scale">
+                <i class="bi bi-person-plus-fill me-2"></i>Nueva Persona
             </a>
         </div>
     </x-slot>
 
-    <div class="py-6 md:py-12 animate-fade-in">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="container py-4 animate-fade-in">
+        <!-- Dashboard Style Filters -->
+        <div class="card border-0 mb-4 rounded-4 shadow-lg overflow-hidden"
+            style="background-color: #0d0d0d; border: 1px solid #1a1a1a !important;">
+            <div class="card-body p-4">
+                <form action="{{ route('personas.index') }}" method="GET" class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary small fw-bold text-uppercase">Búsqueda Rápida</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark-soft border-glass-thin text-secondary">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" name="search"
+                                class="form-control bg-dark-soft border-glass-thin text-white"
+                                placeholder="Nombre, Cédula, Apodo o Placa..." value="{{ request('search') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-secondary small fw-bold text-uppercase">Estado</label>
+                        <select name="activo" class="form-select bg-dark-soft border-glass-thin text-white">
+                            <option value="">Todos los estados</option>
+                            <option value="1" {{ request('activo') == '1' ? 'selected' : '' }}>Activo</option>
+                            <option value="0" {{ request('activo') == '0' ? 'selected' : '' }}>Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-indigo w-100 py-2 rounded-3 fw-bold shadow-sm">
+                            <i class="bi bi-filter me-1"></i> Filtrar
+                        </button>
+                        @if(request()->anyFilled(['search', 'activo']))
+                            <a href="{{ route('personas.index') }}"
+                                class="btn btn-dark-soft py-2 px-3 rounded-3 border-glass">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        @endif
+                    </div>
+                </form>
+            </div>
+        </div>
 
-            @if(session('success'))
-                <div class="mb-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 text-green-700 dark:text-green-400 p-4 rounded-r shadow-sm flex items-center"
-                    role="alert">
-                    <svg class="h-5 w-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span class="block sm:inline font-medium">{{ session('success') }}</span>
-                </div>
-            @endif
+        @if(session('success'))
+            <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4 animate-fade-in" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+            </div>
+        @endif
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <!-- Vista de tabla para desktop -->
-                <div class="hidden md:block p-6 text-gray-900 dark:text-gray-100">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-700/50">
-                                <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Cédula</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Nombre</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Apodo</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Celular</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Placa</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Estado</th>
-                                    <th
-                                        class="px-6 py-3 text-right text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                @forelse($personas as $persona)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $persona->cedula }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $persona->nombre }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $persona->apodo ?? '-' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $persona->celular ?? '-' }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600 dark:text-gray-200">
-                                            {{ $persona->placa ?? '-' }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            @if($persona->activo)
-                                                <span
-                                                    class="px-2 py-1 inline-flex text-xs leading-4 font-semibold rounded-md bg-green-100 text-green-800 border-green-200 border">Activo</span>
-                                            @else
-                                                <span
-                                                    class="px-2 py-1 inline-flex text-xs leading-4 font-semibold rounded-md bg-red-100 text-red-800 border-red-200 border">Inactivo</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <!-- Responsive Card/Table Wrapper -->
+        <div class="card border-0 rounded-4 shadow-lg overflow-hidden"
+            style="background-color: #0d0d0d; border: 1px solid #1a1a1a !important;">
+
+            {{-- Desktop View --}}
+            <div class="d-none d-lg-block">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle custom-personas-table">
+                        <thead>
+                            <tr class="bg-dark-soft border-bottom border-secondary border-opacity-10">
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase">Información Personal
+                                </th>
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase">Identificación</th>
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase">Contacto / Vehículo
+                                </th>
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase">Estado</th>
+                                <th class="px-4 py-3 text-end text-secondary small fw-bold text-uppercase">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-secondary border-opacity-10">
+                            @forelse($personas as $persona)
+                                <tr class="border-bottom border-secondary border-opacity-5 transition-all hover-highlight">
+                                    <td class="px-4 py-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle bg-primary-soft text-primary me-3">
+                                                {{ substr($persona->nombre, 0, 1) }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-white">{{ $persona->nombre }}</div>
+                                                <div class="text-xs text-secondary">{{ $persona->apodo ?? 'Sin apodo' }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="d-flex flex-column">
+                                            <span class="text-white-50 small">CC: {{ $persona->cedula }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4 text-white-50">
+                                        <div class="d-flex flex-column gap-1">
+                                            <div class="small"><i
+                                                    class="bi bi-phone me-2 text-indigo-400"></i>{{ $persona->celular ?? '-' }}
+                                            </div>
+                                            <div class="small"><i
+                                                    class="bi bi-car-front-fill me-2 text-indigo-400"></i>{{ $persona->placa ?? '-' }}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        @if($persona->activo)
+                                            <span class="status-chip status-success">Activo</span>
+                                        @else
+                                            <span class="status-chip status-danger">Inactivo</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-4 text-end">
+                                        <div class="btn-group">
                                             <a href="{{ route('personas.edit', $persona->id) }}"
-                                                class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3">Editar</a>
+                                                class="btn btn-sm btn-dark-soft border-glass-thin text-indigo-400">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                             <form action="{{ route('personas.destroy', $persona->id) }}" method="POST"
-                                                class="inline-block"
-                                                onsubmit="return confirm('¿Seguro que deseas eliminar a esta persona? Esto también afectará el historial de registros.');">
+                                                class="d-inline" onsubmit="return confirm('¿Eliminar esta persona?');">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
-                                                    class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Eliminar</button>
+                                                    class="btn btn-sm btn-dark-soft border-glass-thin text-danger">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </form>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="px-6 py-8 text-center text-sm text-gray-500">
-                                            No hay personas registradas en el sistema. <br>
-                                            <a href="{{ route('personas.create') }}"
-                                                class="text-indigo-600 hover:underline mt-2 inline-block">Agrega tu primera
-                                                persona</a>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="px-4 py-5 text-center text-secondary italic">
+                                        <i class="bi bi-people fs-2 mb-2 d-block opacity-25"></i>
+                                        No se encontraron personas registradas.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
+            </div>
 
-                <!-- Vista de tarjetas para móvil -->
-                <div class="md:hidden p-4 text-gray-900 dark:text-gray-100">
+            {{-- Mobile & Tablet View --}}
+            <div class="d-lg-none p-3">
+                <div class="row g-3">
                     @forelse($personas as $persona)
-                        <div
-                            class="mb-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg {{ $persona->activo ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900' }}">
-                            <div class="flex justify-between items-start mb-3">
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-bold text-base truncate">{{ $persona->nombre }}</h3>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">CC: {{ $persona->cedula }}</p>
-                                </div>
-                                <div class="ml-2 flex-shrink-0">
+                        <div class="col-12 col-md-6">
+                            <div class="persona-mobile-card p-4 rounded-4 border-glass-thin h-100">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm-circle bg-primary-soft text-primary me-3">
+                                            {{ substr($persona->nombre, 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-white fs-5">{{ $persona->nombre }}</div>
+                                            <div class="text-xs text-secondary">CC: {{ $persona->cedula }}</div>
+                                        </div>
+                                    </div>
                                     @if($persona->activo)
-                                        <span
-                                            class="px-2 py-1 text-xs font-semibold rounded-md bg-green-100 text-green-800">Activo</span>
+                                        <span class="status-chip status-success">Activo</span>
                                     @else
-                                        <span
-                                            class="px-2 py-1 text-xs font-semibold rounded-md bg-red-100 text-red-800">Inactivo</span>
+                                        <span class="status-chip status-danger">Inactivo</span>
                                     @endif
                                 </div>
-                            </div>
-
-                            <div class="space-y-1 text-sm mb-3">
-                                <p><span class="font-medium">Apodo:</span> {{ $persona->apodo ?? '-' }}</p>
-                                <p><span class="font-medium">Celular:</span> {{ $persona->celular ?? '-' }}</p>
-                                <p><span class="font-medium">Placa:</span> <span
-                                        class="font-mono">{{ $persona->placa ?? '-' }}</span></p>
-                            </div>
-
-                            <div class="flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
-                                <a href="{{ route('personas.edit', $persona->id) }}"
-                                    class="flex-1 text-center px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700">
-                                    Editar
-                                </a>
-                                <form action="{{ route('personas.destroy', $persona->id) }}" method="POST" class="flex-1"
-                                    onsubmit="return confirm('¿Seguro que deseas eliminar a esta persona?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="w-full px-3 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700">
-                                        Eliminar
-                                    </button>
-                                </form>
+                                <div class="info-grid mb-4">
+                                    <div
+                                        class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary border-opacity-10">
+                                        <span class="text-secondary small fw-bold text-uppercase">Apodo</span>
+                                        <span class="text-white small">{{ $persona->apodo ?? '-' }}</span>
+                                    </div>
+                                    <div
+                                        class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary border-opacity-10">
+                                        <span class="text-secondary small fw-bold text-uppercase">Celular</span>
+                                        <span class="text-white small">{{ $persona->celular ?? '-' }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-0">
+                                        <span class="text-secondary small fw-bold text-uppercase">Placa</span>
+                                        <span class="text-white-50 small mono">{{ $persona->placa ?? '-' }}</span>
+                                    </div>
+                                </div>
+                                <div class="d-grid grid-cols-2 gap-2 mt-auto">
+                                    <a href="{{ route('personas.edit', $persona->id) }}"
+                                        class="btn btn-outline-indigo py-2 rounded-3 fw-bold">
+                                        <i class="bi bi-pencil me-1"></i> Editar
+                                    </a>
+                                    <form action="{{ route('personas.destroy', $persona->id) }}" method="POST"
+                                        onsubmit="return confirm('¿Eliminar persona?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger w-100 py-2 rounded-3 fw-bold">
+                                            <i class="bi bi-trash me-1"></i> Eliminar
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     @empty
-                        <div class="text-center py-8 text-gray-500">
-                            No hay personas registradas en el sistema. <br>
-                            <a href="{{ route('personas.create') }}"
-                                class="text-indigo-600 hover:underline mt-2 inline-block">Agrega tu primera persona</a>
+                        <div class="col-12 py-5 text-center text-secondary italic">
+                            No se encontraron personas registradas.
                         </div>
                     @endforelse
                 </div>
             </div>
+
+            @if($personas->hasPages())
+                <div class="card-footer bg-transparent border-top border-secondary border-opacity-10 p-4">
+                    {{ $personas->links() }}
+                </div>
+            @endif
         </div>
     </div>
+
+    <style>
+        .custom-personas-table {
+            background: transparent !important;
+        }
+
+        .bg-dark-soft {
+            background-color: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        .bg-primary-soft {
+            background-color: rgba(79, 70, 229, 0.1) !important;
+        }
+
+        .border-glass {
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .border-glass-thin {
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .grid-cols-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .avatar-circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            border: 2px solid rgba(79, 70, 229, 0.2);
+        }
+
+        .avatar-sm-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+        }
+
+        .status-chip {
+            padding: 4px 14px;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .status-danger {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .hover-highlight:hover {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            transform: scale(1.002);
+            z-index: 10;
+        }
+
+        .persona-mobile-card {
+            background-color: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .persona-mobile-card:hover {
+            background-color: rgba(255, 255, 255, 0.04);
+            border-color: rgba(79, 70, 229, 0.2) !important;
+        }
+
+        .text-xs {
+            font-size: 0.7rem;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        .btn-indigo {
+            background-color: #4f46e5;
+            color: white;
+        }
+
+        .btn-indigo:hover {
+            background-color: #4338ca;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-indigo {
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.3);
+        }
+
+        .btn-outline-indigo:hover {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: #818cf8;
+            border-color: #818cf8;
+        }
+
+        .btn-dark-soft {
+            background-color: rgba(26, 26, 26, 0.8);
+            color: #9ca3af;
+        }
+
+        .btn-dark-soft:hover {
+            background-color: #262626;
+            color: white;
+        }
+
+        .hover-scale {
+            transition: transform 0.2s;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.03);
+        }
+
+        .hover-scale:active {
+            transform: scale(0.98);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 1rem;
+        }
+    </style>
 </x-app-layout>

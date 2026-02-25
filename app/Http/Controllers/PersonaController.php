@@ -7,9 +7,24 @@ use Illuminate\Http\Request;
 
 class PersonaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $personas = Persona::all();
+        $personas = Persona::query()
+            ->when($request->search, function ($query, $search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->where('nombre', 'like', "%{$search}%")
+                        ->orWhere('cedula', 'like', "%{$search}%")
+                        ->orWhere('apodo', 'like', "%{$search}%")
+                        ->orWhere('placa', 'like', "%{$search}%");
+                });
+            })
+            ->when($request->filled('activo'), function ($query) use ($request) {
+                return $query->where('activo', $request->activo);
+            })
+            ->orderBy('nombre')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('personas.index', compact('personas'));
     }
 
