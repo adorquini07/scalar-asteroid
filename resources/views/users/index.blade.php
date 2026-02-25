@@ -1,94 +1,363 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Gestión de Usuarios') }}
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <h2 class="h4 font-weight-bold mb-0 text-white">
+                <i class="bi bi-person-badge-fill me-2 text-primary"></i>{{ __('Gestión de Usuarios') }}
             </h2>
             <a href="{{ route('users.create') }}"
-                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 transition ease-in-out duration-150 shadow-md">
-                + Nuevo Usuario
+                class="btn btn-primary btn-lg px-4 rounded-3 fw-bold shadow-lg transition-transform hover-scale">
+                <i class="bi bi-person-plus-fill me-2"></i>Nuevo Usuario
             </a>
         </div>
     </x-slot>
 
-    <div class="py-12 animate-fade-in">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="container py-4 animate-fade-in">
+        <!-- Dashboard Style Filters -->
+        <div class="card border-0 mb-4 rounded-4 shadow-lg overflow-hidden"
+            style="background-color: #0d0d0d; border: 1px solid #1a1a1a !important;">
+            <div class="card-body p-4">
+                <form action="{{ route('users.index') }}" method="GET" class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary small fw-bold text-uppercase">Búsqueda Rápida</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark-soft border-glass-thin text-secondary">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" name="search"
+                                class="form-control bg-dark-soft border-glass-thin text-white"
+                                placeholder="Nombre o Email..." value="{{ request('search') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-secondary small fw-bold text-uppercase">Rol</label>
+                        <select name="rol" class="form-select bg-dark-soft border-glass-thin text-white">
+                            <option value="">Todos los roles</option>
+                            <option value="admin" {{ request('rol') == 'admin' ? 'selected' : '' }}>Administrador</option>
+                            <option value="registradora" {{ request('rol') == 'registradora' ? 'selected' : '' }}>
+                                Registradora</option>
+                            <option value="visor" {{ request('rol') == 'visor' ? 'selected' : '' }}>Visor</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-indigo w-100 py-2 rounded-3 fw-bold shadow-sm">
+                            <i class="bi bi-filter me-1"></i> Filtrar
+                        </button>
+                        @if(request()->anyFilled(['search', 'rol']))
+                            <a href="{{ route('users.index') }}" class="btn btn-dark-soft py-2 px-3 rounded-3 border-glass">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        @endif
+                    </div>
+                </form>
+            </div>
+        </div>
 
-            @if(session('success'))
-                <div class="mb-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 text-green-700 dark:text-green-400 p-4 rounded-r shadow-sm flex items-center"
-                    role="alert">
-                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span class="block sm:inline font-medium">{{ session('success') }}</span>
-                </div>
-            @endif
+        @if(session('success'))
+            <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4 animate-fade-in" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+            </div>
+        @endif
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-700/50">
-                                <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Nombre</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Email</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Rol</th>
-                                    <th
-                                        class="px-6 py-3 text-right text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                @forelse($users as $user)
-                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                                        <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $user->name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            @if($user->rol === 'admin')
-                                                <span
-                                                    class="px-2 py-1 inline-flex text-xs leading-4 font-semibold rounded-md bg-purple-100 text-purple-800 border-purple-200 border">Administrador</span>
-                                            @elseif($user->rol === 'registradora')
-                                                <span
-                                                    class="px-2 py-1 inline-flex text-xs leading-4 font-semibold rounded-md bg-blue-100 text-blue-800 border-blue-200 border">Registradora</span>
-                                            @else
-                                                <span
-                                                    class="px-2 py-1 inline-flex text-xs leading-4 font-semibold rounded-md bg-gray-100 text-gray-800 border-gray-200 border">Visor</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        @if(session('error'))
+            <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 animate-fade-in" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+            </div>
+        @endif
+
+        <!-- Responsive Card/Table Wrapper -->
+        <div class="card border-0 rounded-4 shadow-lg overflow-hidden"
+            style="background-color: #0d0d0d; border: 1px solid #1a1a1a !important;">
+
+            {{-- Desktop View --}}
+            <div class="d-none d-lg-block">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle custom-users-table">
+                        <thead>
+                            <tr class="bg-dark-soft border-bottom border-secondary border-opacity-10">
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase">Nombre de Usuario</th>
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase">Email / Contacto</th>
+                                <th class="px-4 py-3 text-secondary small fw-bold text-uppercase">Rol / Permisos</th>
+                                <th class="px-4 py-3 text-end text-secondary small fw-bold text-uppercase">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-secondary border-opacity-10">
+                            @forelse($users as $user)
+                                <tr class="border-bottom border-secondary border-opacity-5 transition-all hover-highlight">
+                                    <td class="px-4 py-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle bg-indigo-soft text-indigo-400 me-3">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                            <div class="fw-bold text-white">{{ $user->name }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4 text-white-50">
+                                        <div class="small"><i
+                                                class="bi bi-envelope me-2 text-indigo-400"></i>{{ $user->email }}</div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        @if($user->rol === 'admin')
+                                            <span class="role-badge role-admin">Administrador</span>
+                                        @elseif($user->rol === 'registradora')
+                                            <span class="role-badge role-registradora">Registradora</span>
+                                        @else
+                                            <span class="role-badge role-visor">Visor</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-4 text-end">
+                                        <div class="btn-group">
                                             <a href="{{ route('users.edit', $user->id) }}"
-                                                class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3">Editar</a>
+                                                class="btn btn-sm btn-dark-soft border-glass-thin text-indigo-400">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                             @if($user->id !== auth()->id())
                                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                                    class="inline-block"
-                                                    onsubmit="return confirm('¿Seguro que deseas eliminar a este usuario?');">
+                                                    class="d-inline" onsubmit="return confirm('¿Eliminar este usuario?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
-                                                        class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Eliminar</button>
+                                                        class="btn btn-sm btn-dark-soft border-glass-thin text-danger">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
                                                 </form>
                                             @endif
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="px-6 py-8 text-center text-sm text-gray-500">
-                                            No hay usuarios registrados.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-4 py-5 text-center text-secondary italic">
+                                        <i class="bi bi-person-exclamation fs-2 mb-2 d-block opacity-25"></i>
+                                        No se encontraron usuarios registrados.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
+            {{-- Mobile View --}}
+            <div class="d-lg-none p-3">
+                <div class="row g-3">
+                    @forelse($users as $user)
+                        <div class="col-12 col-md-6">
+                            <div class="user-mobile-card p-4 rounded-4 border-glass-thin h-100">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm-circle bg-indigo-soft text-indigo-400 me-3">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-white fs-5">{{ $user->name }}</div>
+                                            <div class="text-xs text-secondary italic">{{ $user->email }}</div>
+                                        </div>
+                                    </div>
+                                    @if($user->rol === 'admin')
+                                        <span class="role-badge role-admin">Admin</span>
+                                    @elseif($user->rol === 'registradora')
+                                        <span class="role-badge role-registradora">Reg</span>
+                                    @else
+                                        <span class="role-badge role-visor">Visor</span>
+                                    @endif
+                                </div>
+                                <div class="d-flex gap-2 mt-3 pt-3 border-top border-secondary border-opacity-10">
+                                    <a href="{{ route('users.edit', $user->id) }}"
+                                        class="btn btn-outline-indigo flex-grow-1 py-2 rounded-3 fw-bold">
+                                        <i class="bi bi-pencil me-1"></i> Editar
+                                    </a>
+                                    @if($user->id !== auth()->id())
+                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="flex-grow-1"
+                                            onsubmit="return confirm('¿Eliminar usuario?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger w-100 py-2 rounded-3 fw-bold">
+                                                <i class="bi bi-trash me-1"></i> Borrar
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12 py-5 text-center text-secondary italic">
+                            No se encontraron usuarios registrados.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            @if($users->hasPages())
+                <div class="card-footer bg-transparent border-top border-secondary border-opacity-10 p-4">
+                    {{ $users->links() }}
+                </div>
+            @endif
         </div>
     </div>
+
+    <style>
+        .custom-users-table {
+            background: transparent !important;
+        }
+
+        .bg-dark-soft {
+            background-color: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        .bg-indigo-soft {
+            background-color: rgba(79, 70, 229, 0.1) !important;
+        }
+
+        .border-glass {
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .border-glass-thin {
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            font-size: 1.2rem;
+        }
+
+        .avatar-sm-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+        }
+
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .role-admin {
+            background: rgba(168, 85, 247, 0.12);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+        }
+
+        .role-registradora {
+            background: rgba(59, 130, 246, 0.12);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+
+        .role-visor {
+            background: rgba(156, 163, 175, 0.12);
+            color: #d1d5db;
+            border: 1px solid rgba(156, 163, 175, 0.25);
+        }
+
+        .hover-highlight:hover {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            transform: scale(1.002);
+            z-index: 10;
+        }
+
+        .user-mobile-card {
+            background-color: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .user-mobile-card:hover {
+            background-color: rgba(255, 255, 255, 0.04);
+            border-color: rgba(79, 70, 229, 0.2) !important;
+        }
+
+        .text-xs {
+            font-size: 0.7rem;
+        }
+
+        .btn-indigo {
+            background-color: #4f46e5;
+            color: white;
+        }
+
+        .btn-indigo:hover {
+            background-color: #4338ca;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-indigo {
+            color: #818cf8;
+            border-color: rgba(129, 140, 248, 0.3);
+        }
+
+        .btn-outline-indigo:hover {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: #818cf8;
+            border-color: #818cf8;
+        }
+
+        .btn-dark-soft {
+            background-color: rgba(26, 26, 26, 0.8);
+            color: #9ca3af;
+        }
+
+        .btn-dark-soft:hover {
+            background-color: #262626;
+            color: white;
+        }
+
+        .hover-scale {
+            transition: transform 0.2s;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.03);
+        }
+
+        .hover-scale:active {
+            transform: scale(0.98);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 1rem;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 1rem;
+        }
+    </style>
 </x-app-layout>
