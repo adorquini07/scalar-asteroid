@@ -118,19 +118,65 @@
             filter: brightness(1.1);
         }
 
-        /* Select2 Dark Fix */
-        .select2-dropdown {
-            background-color: #121212 !important;
+        /* Select2 Premium Styling */
+        .select2-container--bootstrap-5 .select2-selection {
+            min-height: 52px !important;
+            display: flex !important;
+            align-items: center !important;
+            background-color: rgba(255, 255, 255, 0.03) !important;
             border: 1px solid var(--glass-border) !important;
             border-radius: 1rem !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+            color: #ffffff !important;
+            padding-left: 1rem !important;
+            font-size: 0.95rem !important;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__placeholder {
+            color: #64748b !important;
+        }
+
+        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15) !important;
+        }
+
+        .select2-dropdown {
+            background-color: #0f172a !important;
+            /* Deep navy/black */
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+            overflow: hidden !important;
+            z-index: 9999 !important;
+        }
+
+        .select2-search__field {
+            background-color: #1e293b !important;
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 0.75rem !important;
+            color: #ffffff !important;
+            margin-bottom: 8px !important;
         }
 
         .select2-results__option {
-            padding: 10px 15px !important;
+            padding: 12px 16px !important;
+            font-size: 0.9rem !important;
+            color: #94a3b8 !important;
+            transition: background 0.2s ease !important;
         }
 
         .select2-results__option--highlighted {
             background-color: #4f46e5 !important;
+            color: #ffffff !important;
+        }
+
+        .select2-results__option[aria-selected=true] {
+            background-color: rgba(79, 70, 229, 0.2) !important;
+            color: #818cf8 !important;
         }
 
         .alert-success {
@@ -168,8 +214,13 @@
             animation: fadeIn 0.4s ease-out;
         }
 
-        .text-indigo-400 { color: #818cf8 !important; }
-        .bg-indigo-600 { background-color: #4f46e5 !important; }
+        .text-indigo-400 {
+            color: #818cf8 !important;
+        }
+
+        .bg-indigo-600 {
+            background-color: #4f46e5 !important;
+        }
     </style>
 </head>
 
@@ -229,7 +280,8 @@
                     <option value="">Seleccione el puesto...</option>
                     @foreach($ubicaciones as $ubicacion)
                         <option value="{{ $ubicacion->id }}" data-mesas="{{ $ubicacion->total_mesas }}">
-                            {{ $ubicacion->nombre }}</option>
+                            {{ $ubicacion->nombre }}
+                        </option>
                     @endforeach
                 </select>
                 @error('ubicacion_id') <div class="text-danger x-small mt-1">{{ $message }}</div> @enderror
@@ -269,17 +321,14 @@
             $('.select2').select2({
                 theme: 'bootstrap-5',
                 width: '100%',
-                dropdownParent: $('.auth-card')
+                placeholder: 'Seleccione el puesto...'
             });
 
-            // Fix Select2 Search Bar Contrast
+            // Focus search field on open
             $(document).on('select2:open', () => {
-                document.querySelector('.select2-search__field').focus();
-                $('.select2-search__field').css({
-                    'background-color': '#1a1a1a',
-                    'color': '#ffffff',
-                    'border': '1px solid rgba(255,255,255,0.1)'
-                });
+                setTimeout(() => {
+                    document.querySelector('.select2-search__field').focus();
+                }, 10);
             });
 
             // Mesa Grid Logic
