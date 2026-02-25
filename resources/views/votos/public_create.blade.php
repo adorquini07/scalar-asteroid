@@ -229,7 +229,7 @@
     <div class="auth-card">
         <div class="text-center mb-4">
             <div class="logo-container">
-                <i class="bi bi-vote-yea text-white"></i>
+                <i class="bi bi-fingerprint text-white"></i>
             </div>
             <h2 class="fw-extrabold mb-1">Registro de Voto</h2>
             <p class="text-secondary small">Reporte Oficial de Líderes</p>
