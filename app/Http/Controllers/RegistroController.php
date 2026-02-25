@@ -51,10 +51,9 @@ class RegistroController extends Controller
 
         // Sincronizar con la tabla de Votos si es una llegada y tiene datos de votación
         if ($request->tipo === 'llegada' && $request->ubicacion_id && $request->mesa_vota) {
-            $persona = Persona::find($request->persona_id);
             Voto::create([
-                'nombre_votante' => $persona->nombre,
-                'nombre_lider' => $request->referido ?? 'General',
+                'nombre_votante' => $request->referido,
+                'nombre_lider' => null, // No se asigna líder cuando viene de registro oficial
                 'ubicacion_id' => $request->ubicacion_id,
                 'mesa' => $request->mesa_vota,
                 'user_id' => auth()->id(),

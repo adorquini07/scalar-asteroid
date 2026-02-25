@@ -25,10 +25,7 @@
                                         Tipo</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Referido</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Ubicación</th>
+                                        Punto de Apoyo</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         Registrado Por</th>
@@ -57,10 +54,9 @@
                                                     🟡</span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $registro->referido ?? '-' }}
-                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            {{ $registro->ubicacion ? $registro->ubicacion->nombre : 'Sin ubicación' }}</td>
+                                            {{ $registro->puntoApoyo ? $registro->puntoApoyo->nombre : '-' }}
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ optional($registro->user)->name }}
                                         </td>
