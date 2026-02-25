@@ -6,6 +6,7 @@ use App\Models\Registro;
 use App\Models\Persona;
 use App\Models\Ubicacion;
 use App\Models\PuntoApoyo;
+use App\Models\Voto;
 use Illuminate\Http\Request;
 
 class RegistroController extends Controller
@@ -38,7 +39,7 @@ class RegistroController extends Controller
             'punto_apoyo_id.required' => 'Debe seleccionar un punto de apoyo.',
         ]);
 
-        Registro::create([
+        $registro = Registro::create([
             'persona_id' => $request->persona_id,
             'referido' => $request->referido,
             'user_id' => auth()->id(),
@@ -47,6 +48,18 @@ class RegistroController extends Controller
             'mesa_vota' => $request->mesa_vota,
             'tipo' => $request->tipo,
         ]);
+
+        // Sincronizar con la tabla de Votos si es una llegada y tiene datos de votación
+        if ($request->tipo === 'llegada' && $request->ubicacion_id && $request->mesa_vota) {
+            $persona = Persona::find($request->persona_id);
+            Voto::create([
+                'nombre_votante' => $persona->nombre,
+                'nombre_lider' => $request->referido ?? 'General',
+                'ubicacion_id' => $request->ubicacion_id,
+                'mesa' => $request->mesa_vota,
+                'user_id' => auth()->id(),
+            ]);
+        }
 
         return redirect()->route('registros.create')->with('success', '✅ Registro guardado correctamente');
     }
