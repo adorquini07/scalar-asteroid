@@ -1,62 +1,88 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Editar Puesto de Votación') }}
-        </h2>
+        <div class="d-flex align-items-center gap-3">
+            <a href="{{ route('ubicaciones.index') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h2 class="h4 fw-bold mb-0 text-white">
+                <i class="bi bi-pencil-square me-2 text-primary"></i>Editar Puesto de Votación
+            </h2>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-xl border border-gray-100 dark:border-gray-700">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form method="POST" action="{{ route('ubicaciones.update', $ubicacion) }}" class="space-y-5">
-                        @csrf
-                        @method('PUT')
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-7">
+                <div class="card border-0 rounded-4 shadow-lg"
+                    style="background-color: #0d0d0d; border: 1px solid #1a1a1a !important;">
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST" action="{{ route('ubicaciones.update', $ubicacion) }}">
+                            @csrf
+                            @method('PUT')
 
-                        <!-- Punto de Apoyo (padre) -->
-                        <div>
-                            <x-input-label for="punto_apoyo_id" :value="__('Punto de Apoyo al que pertenece')" />
-                            <select id="punto_apoyo_id" name="punto_apoyo_id"
-                                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                required>
-                                <option value="" disabled>Seleccione un punto de apoyo...</option>
-                                @foreach($puntosApoyo as $punto)
-                                    <option value="{{ $punto->id }}"
-                                        {{ old('punto_apoyo_id', $ubicacion->punto_apoyo_id) == $punto->id ? 'selected' : '' }}>
-                                        {{ $punto->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('punto_apoyo_id')" class="mt-2" />
-                        </div>
+                            <!-- Punto de Apoyo -->
+                            <div class="mb-4">
+                                <label for="punto_apoyo_id" class="form-label text-secondary fw-semibold text-uppercase small">
+                                    <i class="bi bi-diagram-3 me-1 text-primary"></i>Punto de Apoyo al que pertenece <span class="text-danger">*</span>
+                                </label>
+                                <select id="punto_apoyo_id" name="punto_apoyo_id"
+                                    class="form-select rounded-3 @error('punto_apoyo_id') is-invalid @enderror"
+                                    required>
+                                    <option value="" disabled>Seleccione un punto de apoyo...</option>
+                                    @foreach($puntosApoyo as $punto)
+                                        <option value="{{ $punto->id }}"
+                                            {{ old('punto_apoyo_id', $ubicacion->punto_apoyo_id) == $punto->id ? 'selected' : '' }}>
+                                            {{ $punto->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('punto_apoyo_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                        <!-- Nombre del Puesto de Votación -->
-                        <div>
-                            <x-input-label for="nombre" :value="__('Nombre del Puesto de Votación')" />
-                            <x-text-input id="nombre" class="block mt-1 w-full" type="text" name="nombre"
-                                :value="old('nombre', $ubicacion->nombre)" required autofocus />
-                            <x-input-error :messages="$errors->get('nombre')" class="mt-2" />
-                        </div>
+                            <!-- Nombre del Puesto -->
+                            <div class="mb-4">
+                                <label for="nombre" class="form-label text-secondary fw-semibold text-uppercase small">
+                                    <i class="bi bi-building me-1 text-primary"></i>Nombre del Puesto de Votación <span class="text-danger">*</span>
+                                </label>
+                                <input id="nombre" type="text" name="nombre"
+                                    class="form-control rounded-3 @error('nombre') is-invalid @enderror"
+                                    value="{{ old('nombre', $ubicacion->nombre) }}" required autofocus
+                                    placeholder="Ej: Institución Educativa Divino Niño">
+                                @error('nombre')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                        <!-- Total de Mesas -->
-                        <div>
-                            <x-input-label for="total_mesas" :value="__('Total de Mesas en este Puesto')" />
-                            <x-text-input id="total_mesas" class="block mt-1 w-full" type="number" min="0" name="total_mesas"
-                                :value="old('total_mesas', $ubicacion->total_mesas)" required />
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Número de mesas habilitadas. Las mesas se generan del 1 al N.</p>
-                            <x-input-error :messages="$errors->get('total_mesas')" class="mt-2" />
-                        </div>
+                            <!-- Total de Mesas -->
+                            <div class="mb-4">
+                                <label for="total_mesas" class="form-label text-secondary fw-semibold text-uppercase small">
+                                    <i class="bi bi-table me-1 text-primary"></i>Total de Mesas en este Puesto <span class="text-danger">*</span>
+                                </label>
+                                <input id="total_mesas" type="number" min="0" name="total_mesas"
+                                    class="form-control rounded-3 @error('total_mesas') is-invalid @enderror"
+                                    value="{{ old('total_mesas', $ubicacion->total_mesas) }}" required
+                                    placeholder="Ej: 7">
+                                <div class="form-text text-secondary">
+                                    <i class="bi bi-info-circle me-1"></i>Número de mesas habilitadas. Las mesas se generan del 1 al N.
+                                </div>
+                                @error('total_mesas')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-                        <div class="flex items-center justify-end pt-4 border-t border-gray-100 dark:border-gray-700">
-                            <a href="{{ route('ubicaciones.index') }}"
-                                class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mr-4">
-                                {{ __('Cancelar') }}
-                            </a>
-                            <x-primary-button class="px-6 py-2">
-                                {{ __('Actualizar Puesto') }}
-                            </x-primary-button>
-                        </div>
-                    </form>
+                            <!-- Botones -->
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top border-secondary border-opacity-25 gap-2">
+                                <a href="{{ route('ubicaciones.index') }}" class="btn btn-outline-secondary px-4 py-2 rounded-3">
+                                    <i class="bi bi-x-lg me-1"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary px-5 py-2 rounded-3 fw-bold">
+                                    <i class="bi bi-floppy me-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
