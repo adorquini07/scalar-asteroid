@@ -120,11 +120,11 @@
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                             <form action="{{ route('personas.destroy', $persona->id) }}" method="POST"
-                                                class="d-inline" onsubmit="return confirm('¿Eliminar esta persona?');">
+                                                class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit"
-                                                    class="btn btn-sm btn-dark-soft border-glass-thin text-danger">
+                                                <button type="button" data-nombre="{{ $persona->nombre }}"
+                                                    class="btn btn-sm btn-dark-soft border-glass-thin text-danger btn-confirm-delete">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
@@ -187,11 +187,11 @@
                                         class="btn btn-outline-indigo py-2 rounded-3 fw-bold">
                                         <i class="bi bi-pencil me-1"></i> Editar
                                     </a>
-                                    <form action="{{ route('personas.destroy', $persona->id) }}" method="POST"
-                                        onsubmit="return confirm('¿Eliminar persona?');">
+                                    <form action="{{ route('personas.destroy', $persona->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger w-100 py-2 rounded-3 fw-bold">
+                                        <button type="button" data-nombre="{{ $persona->nombre }}"
+                                            class="btn btn-outline-danger w-100 py-2 rounded-3 fw-bold btn-confirm-delete">
                                             <i class="bi bi-trash me-1"></i> Eliminar
                                         </button>
                                     </form>

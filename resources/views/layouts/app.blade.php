@@ -86,6 +86,34 @@
     @endif
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Confirmación de eliminación con SweetAlert2 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.btn-confirm-delete').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    const form = this.closest('form');
+                    const nombre = this.dataset.nombre || 'este registro';
+                    Swal.fire({
+                        title: '¿Eliminar?',
+                        html: `¿Estás seguro de que deseas eliminar <strong>${nombre}</strong>?<br><span class="text-secondary small">Esta acción no se puede deshacer.</span>`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#374151',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        background: '#0d0d0d',
+                        color: '#ffffff',
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -112,11 +112,11 @@
                                             </a>
                                             @if($user->id !== auth()->id())
                                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                                    class="d-inline" onsubmit="return confirm('¿Eliminar este usuario?');">
+                                                    class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit"
-                                                        class="btn btn-sm btn-dark-soft border-glass-thin text-danger">
+                                                    <button type="button" data-nombre="{{ $user->name }}"
+                                                        class="btn btn-sm btn-dark-soft border-glass-thin text-danger btn-confirm-delete">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </form>
@@ -167,11 +167,11 @@
                                         <i class="bi bi-pencil me-1"></i> Editar
                                     </a>
                                     @if($user->id !== auth()->id())
-                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="flex-grow-1"
-                                            onsubmit="return confirm('¿Eliminar usuario?');">
+                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="flex-grow-1">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-outline-danger w-100 py-2 rounded-3 fw-bold">
+                                            <button type="button" data-nombre="{{ $user->name }}"
+                                                class="btn btn-outline-danger w-100 py-2 rounded-3 fw-bold btn-confirm-delete">
                                                 <i class="bi bi-trash me-1"></i> Borrar
                                             </button>
                                         </form>
