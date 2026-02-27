@@ -11,6 +11,7 @@ class Voto extends Model
         'nombre_lider',
         'ubicacion_id',
         'mesa',
+        'voto_tipo',
         'user_id',
     ];
 

@@ -14,7 +14,91 @@
     </x-slot>
 
     <div class="container py-4">
-        
+
+        <!-- ===== HERO: Cámara vs Senado ===== -->
+        <div class="row g-3 mb-4">
+            <!-- Cámara -->
+            <div class="col-12 col-md-6">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden h-100 card-camara-glow" style="background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 60%, #0ea5e9 100%);">
+                    <div class="card-body p-4 text-white position-relative overflow-hidden">
+                        <div class="hero-bg-icon position-absolute" style="right: -10px; bottom: -15px; font-size: 7rem; opacity: 0.12; line-height:1;">
+                            <i class="bi bi-building-fill"></i>
+                        </div>
+                        <div class="d-flex align-items-start justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:38px;height:38px;background:rgba(255,255,255,0.15);">
+                                        <i class="bi bi-building-fill fs-5"></i>
+                                    </div>
+                                    <span class="fw-bold text-uppercase small opacity-75 tracking-wide">Cámara</span>
+                                </div>
+                                <div class="display-4 fw-black lh-1 mb-1">{{ $totalCamara }}</div>
+                                <p class="mb-0 opacity-75 small fw-medium">Votos confirmados a Cámara</p>
+                            </div>
+                            @if($totalGeneral > 0)
+                            <div class="text-end">
+                                <div class="fw-black fs-4" style="color: rgba(255,255,255,0.9);">
+                                    {{ round(($totalCamara / $totalGeneral) * 100) }}%
+                                </div>
+                                <div class="small opacity-60">del total</div>
+                            </div>
+                            @endif
+                        </div>
+                        @if($totalGeneral > 0)
+                        <div class="mt-3">
+                            <div class="progress rounded-pill" style="height: 6px; background: rgba(255,255,255,0.15);">
+                                <div class="progress-bar rounded-pill" role="progressbar"
+                                    style="width: {{ round(($totalCamara / $totalGeneral) * 100) }}%; background: rgba(255,255,255,0.8);">
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Senado -->
+            <div class="col-12 col-md-6">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden h-100 card-senado-glow" style="background: linear-gradient(135deg, #4c0519 0%, #9f1239 60%, #e11d48 100%);">
+                    <div class="card-body p-4 text-white position-relative overflow-hidden">
+                        <div class="hero-bg-icon position-absolute" style="right: -10px; bottom: -15px; font-size: 7rem; opacity: 0.12; line-height:1;">
+                            <i class="bi bi-bank2"></i>
+                        </div>
+                        <div class="d-flex align-items-start justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:38px;height:38px;background:rgba(255,255,255,0.15);">
+                                        <i class="bi bi-bank2 fs-5"></i>
+                                    </div>
+                                    <span class="fw-bold text-uppercase small opacity-75 tracking-wide">Senado</span>
+                                </div>
+                                <div class="display-4 fw-black lh-1 mb-1">{{ $totalSenado }}</div>
+                                <p class="mb-0 opacity-75 small fw-medium">Votos confirmados a Senado</p>
+                            </div>
+                            @if($totalGeneral > 0)
+                            <div class="text-end">
+                                <div class="fw-black fs-4" style="color: rgba(255,255,255,0.9);">
+                                    {{ round(($totalSenado / $totalGeneral) * 100) }}%
+                                </div>
+                                <div class="small opacity-60">del total</div>
+                            </div>
+                            @endif
+                        </div>
+                        @if($totalGeneral > 0)
+                        <div class="mt-3">
+                            <div class="progress rounded-pill" style="height: 6px; background: rgba(255,255,255,0.15);">
+                                <div class="progress-bar rounded-pill" role="progressbar"
+                                    style="width: {{ round(($totalSenado / $totalGeneral) * 100) }}%; background: rgba(255,255,255,0.8);">
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ===== FIN HERO ===== -->
+
         <!-- Resumen General -->
         <div class="card border-0 shadow-lg mb-4 overflow-hidden rounded-4" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
             <div class="card-body p-4 p-md-5 text-white">
@@ -79,9 +163,18 @@
                                                             @foreach($mesa['votos'] as $voto)
                                                                 <div class="list-group-item bg-transparent border-0 px-0 py-2 mb-2">
                                                                     <div class="p-3 rounded-3" style="background-color: #1a1a1a; border: 1px solid #222;">
-                                                                        <h6 class="fw-bold text-white mb-1 text-truncate">
-                                                                            {{ $voto->nombre_votante }}
-                                                                        </h6>
+                                                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                                                            <h6 class="fw-bold text-white mb-0 text-truncate me-2">
+                                                                                {{ $voto->nombre_votante }}
+                                                                            </h6>
+                                                                            @if($voto->voto_tipo === 'camara')
+                                                                                <span class="badge badge-camara rounded-pill flex-shrink-0"><i class="bi bi-building-fill me-1"></i>Cámara</span>
+                                                                            @elseif($voto->voto_tipo === 'senado')
+                                                                                <span class="badge badge-senado rounded-pill flex-shrink-0"><i class="bi bi-bank2 me-1"></i>Senado</span>
+                                                                            @else
+                                                                                <span class="badge badge-ambas rounded-pill flex-shrink-0"><i class="bi bi-people-fill me-1"></i>Ambas</span>
+                                                                            @endif
+                                                                        </div>
                                                                         <div class="small d-flex flex-wrap gap-2 text-secondary fw-medium">
                                                                             <span class="text-indigo-400">
                                                                                 <i class="bi bi-shield-shaded me-1"></i> Líder: {{ $voto->nombre_lider }}
@@ -174,9 +267,15 @@
         .rounded-4 { border-radius: 1.5rem !important; }
         .fw-black { font-weight: 900 !important; }
         .tracking-tighter { letter-spacing: -0.05em; }
+        .tracking-wide { letter-spacing: 0.05em; }
         .text-indigo-400 { color: #818cf8 !important; }
         .text-indigo-600 { color: #4f46e5 !important; }
         .bg-indigo-600 { background-color: #4f46e5 !important; }
         .opacity-75 { opacity: 0.75; }
+        .card-camara-glow { box-shadow: 0 10px 40px rgba(14, 165, 233, 0.25) !important; }
+        .card-senado-glow { box-shadow: 0 10px 40px rgba(220, 38, 38, 0.25) !important; }
+        .badge-camara { background: linear-gradient(135deg, #0369a1, #0ea5e9); color: #fff; font-size: 0.7rem; padding: 0.25em 0.6em; }
+        .badge-senado { background: linear-gradient(135deg, #9f1239, #e11d48); color: #fff; font-size: 0.7rem; padding: 0.25em 0.6em; }
+        .badge-ambas { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; font-size: 0.7rem; padding: 0.25em 0.6em; }
     </style>
 </x-app-layout>

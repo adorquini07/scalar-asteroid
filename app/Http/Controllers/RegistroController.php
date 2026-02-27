@@ -50,6 +50,7 @@ class RegistroController extends Controller
             'referido' => 'nullable|string',
             'ubicacion_id' => 'nullable|exists:ubicaciones,id',
             'mesa_vota' => 'nullable|integer|min:1',
+            'voto_tipo' => 'nullable|in:camara,senado,ambas',
         ], [
             'tipo.in' => 'El tipo de registro debe ser llegada o salida.',
             'punto_apoyo_id.required' => 'Debe seleccionar un punto de apoyo.',
@@ -72,6 +73,7 @@ class RegistroController extends Controller
                 'nombre_lider' => null, // No se asigna líder cuando viene de registro oficial
                 'ubicacion_id' => $request->ubicacion_id,
                 'mesa' => $request->mesa_vota,
+                'voto_tipo' => $request->voto_tipo ?? 'ambas',
                 'user_id' => auth()->id(),
             ]);
         }

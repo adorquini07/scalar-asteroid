@@ -107,6 +107,29 @@
                                     <x-input-error :messages="$errors->get('ubicacion_id')" class="mt-2" />
                                 </div>
 
+                                {{-- Tipo de Voto --}}
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold mb-2">
+                                        <i class="bi bi-people-fill text-primary me-1"></i> {{ __('¿A quién va a votar?') }}
+                                    </label>
+                                    <input type="hidden" name="voto_tipo" id="voto_tipo" value="{{ old('voto_tipo', 'ambas') }}">
+                                    <div class="tipo-voto-group">
+                                        <button type="button" class="btn-tipo tipo-camara {{ old('voto_tipo', 'ambas') === 'camara' ? 'active' : '' }}" data-value="camara">
+                                            <i class="bi bi-building-fill"></i>
+                                            Cámara
+                                        </button>
+                                        <button type="button" class="btn-tipo tipo-ambas {{ old('voto_tipo', 'ambas') === 'ambas' ? 'active' : '' }}" data-value="ambas">
+                                            <i class="bi bi-people-fill"></i>
+                                            Ambas
+                                        </button>
+                                        <button type="button" class="btn-tipo tipo-senado {{ old('voto_tipo', 'ambas') === 'senado' ? 'active' : '' }}" data-value="senado">
+                                            <i class="bi bi-bank2"></i>
+                                            Senado
+                                        </button>
+                                    </div>
+                                    <x-input-error :messages="$errors->get('voto_tipo')" class="mt-2" />
+                                </div>
+
                                 {{-- Mesa Grid --}}
                                 <div id="mesa-container" class="mb-4 d-none">
                                     <label class="form-label fw-bold mb-2 text-secondary small">
@@ -268,6 +291,60 @@
         .text-secondary {
             color: #6b7280 !important;
         }
+
+        /* Selector de tipo de voto */
+        .tipo-voto-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .btn-tipo {
+            background-color: #1f2937;
+            border: 2px solid #374151;
+            border-radius: 0.75rem;
+            padding: 0.85rem 0.5rem;
+            color: #6b7280;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .btn-tipo i { font-size: 1.4rem; }
+
+        .btn-tipo:hover {
+            border-color: #3b82f6;
+            color: #93c5fd;
+            background-color: rgba(59, 130, 246, 0.08);
+        }
+
+        .btn-tipo.active {
+            border-color: transparent !important;
+            color: #ffffff !important;
+        }
+
+        .btn-tipo.active.tipo-ambas {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-tipo.active.tipo-camara {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            box-shadow: 0 6px 18px rgba(14, 165, 233, 0.35);
+        }
+
+        .btn-tipo.active.tipo-senado {
+            background: linear-gradient(135deg, #dc2626 0%, #9f1239 100%);
+            box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
+        }
     </style>
 
     <!-- External Assets -->
@@ -365,6 +442,13 @@
                 $('#mesa_vota').val(val);
                 $('#mesa-val-display').text(val);
                 $('#mesa-alert').removeClass('d-none').hide().fadeIn(200);
+            });
+
+            // Tipo de Voto Logic
+            $('.btn-tipo').on('click', function () {
+                $('.btn-tipo').removeClass('active');
+                $(this).addClass('active');
+                $('#voto_tipo').val($(this).data('value'));
             });
 
             // Select2 Search Fix

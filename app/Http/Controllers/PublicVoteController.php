@@ -25,11 +25,14 @@ class PublicVoteController extends Controller
             'nombre_lider' => 'required|string|max:255',
             'ubicacion_id' => 'required|exists:ubicaciones,id',
             'mesa' => 'required|integer|min:1',
+            'voto_tipo' => 'required|in:camara,senado,ambas',
         ], [
             'nombre_votante.required' => 'El nombre del votante es obligatorio.',
             'nombre_lider.required' => 'El nombre del líder es obligatorio.',
             'ubicacion_id.required' => 'Debe seleccionar un puesto de votación.',
             'mesa.required' => 'Debe ingresar el número de mesa.',
+            'voto_tipo.required' => 'Debe indicar a quién va a votar.',
+            'voto_tipo.in' => 'El tipo de voto no es válido.',
         ]);
 
         Voto::create([
@@ -37,6 +40,7 @@ class PublicVoteController extends Controller
             'nombre_lider' => $request->nombre_lider,
             'ubicacion_id' => $request->ubicacion_id,
             'mesa' => $request->mesa,
+            'voto_tipo' => $request->voto_tipo,
             'user_id' => auth()->id(), // null si no está logueado
         ]);
 

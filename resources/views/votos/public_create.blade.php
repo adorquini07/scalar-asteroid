@@ -221,6 +221,62 @@
         .bg-indigo-600 {
             background-color: #4f46e5 !important;
         }
+
+        /* Selector de tipo de voto */
+        .tipo-voto-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .btn-tipo {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 0.85rem 0.5rem;
+            color: #64748b;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            line-height: 1.2;
+        }
+
+        .btn-tipo i {
+            font-size: 1.4rem;
+        }
+
+        .btn-tipo:hover {
+            border-color: rgba(79, 70, 229, 0.4);
+            color: #c7d2fe;
+            background-color: rgba(79, 70, 229, 0.08);
+        }
+
+        .btn-tipo.active {
+            border-color: transparent !important;
+            color: #ffffff !important;
+            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-tipo.active.tipo-ambas {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+
+        .btn-tipo.active.tipo-camara {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            box-shadow: 0 6px 18px rgba(14, 165, 233, 0.35);
+        }
+
+        .btn-tipo.active.tipo-senado {
+            background: linear-gradient(135deg, #dc2626 0%, #9f1239 100%);
+            box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35);
+        }
     </style>
 </head>
 
@@ -285,6 +341,27 @@
                     @endforeach
                 </select>
                 @error('ubicacion_id') <div class="text-danger x-small mt-1">{{ $message }}</div> @enderror
+            </div>
+
+            <!-- Tipo de Voto -->
+            <div class="mb-4">
+                <label class="form-label">¿A quién va a votar?</label>
+                <input type="hidden" name="voto_tipo" id="voto_tipo" value="{{ old('voto_tipo', 'ambas') }}">
+                <div class="tipo-voto-group">
+                    <button type="button" class="btn-tipo tipo-camara {{ old('voto_tipo', 'ambas') === 'camara' ? 'active' : '' }}" data-value="camara">
+                        <i class="bi bi-building-fill"></i>
+                        Cámara
+                    </button>
+                    <button type="button" class="btn-tipo tipo-ambas {{ old('voto_tipo', 'ambas') === 'ambas' ? 'active' : '' }}" data-value="ambas">
+                        <i class="bi bi-people-fill"></i>
+                        Ambas
+                    </button>
+                    <button type="button" class="btn-tipo tipo-senado {{ old('voto_tipo', 'ambas') === 'senado' ? 'active' : '' }}" data-value="senado">
+                        <i class="bi bi-bank2"></i>
+                        Senado
+                    </button>
+                </div>
+                @error('voto_tipo') <div class="text-danger x-small mt-1">{{ $message }}</div> @enderror
             </div>
 
             <!-- Mesa -->
@@ -356,6 +433,13 @@
                 } else {
                     $container.fadeOut(300);
                 }
+            });
+
+            // Tipo de Voto Logic
+            $('.btn-tipo').on('click', function () {
+                $('.btn-tipo').removeClass('active');
+                $(this).addClass('active');
+                $('#voto_tipo').val($(this).data('value'));
             });
 
             // Selection Logic

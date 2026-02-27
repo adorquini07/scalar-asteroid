@@ -17,6 +17,11 @@ class VotacionDashboardController extends Controller
         $estadisticas = [];
         $totalGeneral = 0;
 
+        // Conteos por tipo de voto
+        $todosVotos = \App\Models\Voto::all();
+        $totalCamara = $todosVotos->whereIn('voto_tipo', ['camara', 'ambas'])->count();
+        $totalSenado = $todosVotos->whereIn('voto_tipo', ['senado', 'ambas'])->count();
+
         foreach ($ubicaciones as $ubicacion) {
             $mesasData = [];
 
@@ -47,7 +52,7 @@ class VotacionDashboardController extends Controller
             }
         }
 
-        return view('votacion.dashboard', compact('estadisticas', 'totalGeneral'));
+        return view('votacion.dashboard', compact('estadisticas', 'totalGeneral', 'totalCamara', 'totalSenado'));
     }
 }
 
