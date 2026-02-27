@@ -1,47 +1,95 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="card login-card border-0 rounded-4 shadow-lg p-4 p-md-5">
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <!-- Cabecera -->
+        <div class="text-center mb-4">
+            <div class="app-icon mx-auto mb-3">
+                <i class="bi bi-shield-lock-fill text-white fs-4"></i>
+            </div>
+            <h1 class="h4 fw-bold text-white mb-1">{{ config('app.name') }}</h1>
+            <p class="text-secondary small mb-0">Ingresa tus credenciales para continuar</p>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <!-- Estado de sesión -->
+        @if (session('status'))
+            <div class="alert alert-success rounded-3 small py-2 mb-4" role="alert">
+                <i class="bi bi-check-circle me-1"></i>{{ session('status') }}
+            </div>
+        @endif
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+        <!-- Errores -->
+        @if ($errors->any())
+            <div class="alert alert-danger rounded-3 small py-2 mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle me-1"></i>
+                @foreach ($errors->all() as $error)
+                    {{ $error }}<br>
+                @endforeach
+            </div>
+        @endif
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+            <!-- Correo -->
+            <div class="mb-3">
+                <label for="email" class="form-label text-secondary fw-semibold text-uppercase small">
+                    <i class="bi bi-envelope me-1"></i>Correo Electrónico
+                </label>
+                <input id="email" type="email" name="email"
+                    class="form-control rounded-3 py-2 @error('email') is-invalid @enderror"
+                    value="{{ old('email') }}" required autofocus autocomplete="username"
+                    placeholder="usuario@correo.com">
+            </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+            <!-- Contraseña -->
+            <div class="mb-3">
+                <label for="password" class="form-label text-secondary fw-semibold text-uppercase small">
+                    <i class="bi bi-lock me-1"></i>Contraseña
+                </label>
+                <div class="input-group">
+                    <input id="password" type="password" name="password"
+                        class="form-control rounded-start-3 py-2 border-end-0 @error('password') is-invalid @enderror"
+                        required autocomplete="current-password" placeholder="••••••••">
+                    <button type="button" class="btn btn-outline-secondary border-start-0 rounded-end-3"
+                        onclick="togglePassword()" tabindex="-1">
+                        <i class="bi bi-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+            </div>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
+            <!-- Recordarme -->
+            <div class="mb-4">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="remember_me" name="remember"
+                        style="cursor: pointer;">
+                    <label class="form-check-label text-secondary small" for="remember_me" style="cursor: pointer;">
+                        Recordar mi sesión
+                    </label>
+                </div>
+            </div>
+
+            <!-- Botón -->
+            <button type="submit" class="btn btn-login w-100 py-2 rounded-3 fw-bold fs-6">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+            </button>
+        </form>
+    </div>
+
+    <p class="text-center text-secondary mt-3" style="font-size: 0.75rem;">
+        <i class="bi bi-lock-fill me-1"></i>Acceso restringido — solo personal autorizado
+    </p>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('toggleIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        }
+    </script>
 </x-guest-layout>

@@ -129,7 +129,7 @@
             </div>
             @if($registros->hasPages())
                 <div class="card-footer bg-transparent border-top border-secondary border-opacity-10 p-4">
-                    {{ $registros->links() }}
+                    {{ $registros->links('pagination::bootstrap-5') }}
                 </div>
             @endif
         </div>

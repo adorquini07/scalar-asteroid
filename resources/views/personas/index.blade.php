@@ -62,7 +62,7 @@
             {{-- Desktop View --}}
             <div class="d-none d-lg-block">
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover mb-0 align-middle custom-personas-table">
+                    <table class="table table-dark mb-0 align-middle custom-personas-table">
                         <thead>
                             <tr class="bg-dark-soft border-bottom border-secondary border-opacity-10">
                                 <th class="px-4 py-3 text-secondary small fw-bold text-uppercase">Información Personal
@@ -76,7 +76,7 @@
                         </thead>
                         <tbody class="border-secondary border-opacity-10">
                             @forelse($personas as $persona)
-                                <tr class="border-bottom border-secondary border-opacity-5 transition-all hover-highlight">
+                                <tr class="border-bottom border-secondary border-opacity-5">
                                     <td class="px-4 py-4">
                                         <div class="d-flex align-items-center">
                                             <div class="avatar-circle bg-primary-soft text-primary me-3">
@@ -206,7 +206,7 @@
 
             @if($personas->hasPages())
                 <div class="card-footer bg-transparent border-top border-secondary border-opacity-10 p-4">
-                    {{ $personas->links() }}
+                    {{ $personas->links('pagination::bootstrap-5') }}
                 </div>
             @endif
         </div>
@@ -281,20 +281,8 @@
             border: 1px solid rgba(239, 68, 68, 0.25);
         }
 
-        .hover-highlight:hover {
-            background-color: rgba(255, 255, 255, 0.02) !important;
-            transform: scale(1.002);
-            z-index: 10;
-        }
-
         .persona-mobile-card {
             background-color: rgba(255, 255, 255, 0.02);
-            transition: all 0.3s ease;
-        }
-
-        .persona-mobile-card:hover {
-            background-color: rgba(255, 255, 255, 0.04);
-            border-color: rgba(79, 70, 229, 0.2) !important;
         }
 
         .text-xs {
