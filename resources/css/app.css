@@ -1,3 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Bootstrap se carga via CDN en el layout */
+
+/* Nav link activo con borde inferior */
+.nav-link-active {
+    border-bottom: 2px solid #6366f1;
+    color: #ffffff !important;
+}
+
+/* Spacing utilitario para elementos de nav */
+.navbar .nav-link {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
