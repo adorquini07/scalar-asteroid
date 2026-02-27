@@ -12,38 +12,36 @@
     </x-slot>
 
     <div class="container py-4 animate-fade-in">
-        <!-- Dashboard Style Filters -->
-        <div class="card border-0 mb-4 rounded-4 shadow-lg overflow-hidden"
+        <!-- Filtros -->
+        <div class="card border-0 mb-4 rounded-4 shadow-lg"
             style="background-color: #0d0d0d; border: 1px solid #1a1a1a !important;">
             <div class="card-body p-4">
-                <form action="{{ route('users.index') }}" method="GET" class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label text-secondary small fw-bold text-uppercase">Búsqueda Rápida</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-dark-soft border-glass-thin text-secondary">
-                                <i class="bi bi-search"></i>
-                            </span>
-                            <input type="text" name="search"
-                                class="form-control bg-dark-soft border-glass-thin text-white"
-                                placeholder="Nombre o Email..." value="{{ request('search') }}">
-                        </div>
+                <form action="{{ route('users.index') }}" method="GET" class="row g-3 align-items-end">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-secondary fw-semibold text-uppercase small">
+                            <i class="bi bi-search me-1"></i>Búsqueda Rápida
+                        </label>
+                        <input type="text" name="search" class="form-control rounded-3"
+                            placeholder="Nombre o Email..."
+                            value="{{ request('search') }}">
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label text-secondary small fw-bold text-uppercase">Rol</label>
-                        <select name="rol" class="form-select bg-dark-soft border-glass-thin text-white">
+                    <div class="col-12 col-md-3">
+                        <label class="form-label text-secondary fw-semibold text-uppercase small">
+                            <i class="bi bi-shield-check me-1"></i>Rol
+                        </label>
+                        <select name="rol" class="form-select rounded-3">
                             <option value="">Todos los roles</option>
                             <option value="admin" {{ request('rol') == 'admin' ? 'selected' : '' }}>Administrador</option>
-                            <option value="registradora" {{ request('rol') == 'registradora' ? 'selected' : '' }}>
-                                Registradora</option>
+                            <option value="registradora" {{ request('rol') == 'registradora' ? 'selected' : '' }}>Registradora</option>
                             <option value="visor" {{ request('rol') == 'visor' ? 'selected' : '' }}>Visor</option>
                         </select>
                     </div>
-                    <div class="col-md-3 d-flex align-items-end gap-2">
-                        <button type="submit" class="btn btn-indigo w-100 py-2 rounded-3 fw-bold shadow-sm">
+                    <div class="col-12 col-md-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100 rounded-3 fw-bold">
                             <i class="bi bi-filter me-1"></i> Filtrar
                         </button>
                         @if(request()->anyFilled(['search', 'rol']))
-                            <a href="{{ route('users.index') }}" class="btn btn-dark-soft py-2 px-3 rounded-3 border-glass">
+                            <a href="{{ route('users.index') }}" class="btn btn-outline-secondary rounded-3 px-3" title="Limpiar filtros">
                                 <i class="bi bi-x-lg"></i>
                             </a>
                         @endif
