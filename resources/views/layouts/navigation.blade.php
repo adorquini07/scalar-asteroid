@@ -3,10 +3,11 @@
         <a class="navbar-brand me-4" href="{{ route('dashboard') }}">
             <x-application-logo class="d-block" style="height: 2.5rem; width: auto; fill: white;" />
         </a>
-        <button class="navbar-toggler border-secondary" type="button"
+        <button class="navbar-toggler" type="button"
             data-bs-toggle="collapse" data-bs-target="#mainNav"
-            aria-controls="mainNav" aria-expanded="false">
-            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            aria-controls="mainNav" aria-expanded="false"
+            style="border: 2px solid #818cf8; background-color: rgba(129,140,248,0.15); padding: 0.35rem 0.6rem;">
+            <i class="bi bi-list fs-4" style="color: #818cf8;"></i>
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-auto mb-2 mb-sm-0">
